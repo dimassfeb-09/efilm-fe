@@ -8,7 +8,7 @@ import {Link} from "react-router-dom";
 
 export default function Home() {
 
-    const [trending, setTrending] = useState<Movies[] | null>(null);
+    const [trending, setTrending] = useState<MoviesType[] | null>(null);
 
     const fetchDataMovies = async () => {
         try {

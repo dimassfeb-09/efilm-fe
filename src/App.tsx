@@ -7,6 +7,7 @@ import NavBar from "./components/NavBar.tsx";
 import MovieDetail from "./pages/MoviesDetail.tsx";
 import Admin from "./pages/Admin.tsx";
 import AdminMovie from "./pages/AdminMovie.tsx";
+import Genres from "./pages/Genres.tsx";
 
 const App = () => {
     return (
@@ -15,6 +16,7 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Home/>}/>
                 <Route path="/movies/:id" element={<MovieDetail/>}/>
+                <Route path="/genres/:id" element={<Genres/>}/>
                 <Route path="/actors" element={<Actors/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>

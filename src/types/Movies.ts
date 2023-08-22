@@ -1,4 +1,5 @@
-type Movies = {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type MoviesType = {
     id: number;
     title: string;
     trailer_url: string;
@@ -9,4 +10,5 @@ type Movies = {
     release_date: string;
     created_at: string;
     updated_at: string;
+    genres?: GenresType[];
 }

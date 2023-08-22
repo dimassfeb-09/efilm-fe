@@ -9,10 +9,10 @@ const MovieDetail = () => {
 
     const {id} = useParams();
 
-    const [movie, setMovie] = useState<Movies | null>(null);
-    const [genres, setGenres] = useState<Genres[] | null>(null);
-    const [actors, setActors] = useState<Actors[] | null>(null);
-    const [directors, setDirectors] = useState<Directors[] | null>(null);
+    const [movie, setMovie] = useState<MoviesType | null>(null);
+    const [genres, setGenres] = useState<GenresType[] | null>(null);
+    const [actors, setActors] = useState<ActorsType[] | null>(null);
+    const [directors, setDirectors] = useState<DirectorsType[] | null>(null);
 
     const [openDialogTrailer, setOpenDialogTrailer] = useState<boolean>(false);
 

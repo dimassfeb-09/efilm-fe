@@ -36,7 +36,7 @@ const Login = () => {
 
             if (response.data.code == 200) {
                 const date = new Date();
-                date.setTime(date.getTime() + 604800);
+                date.setTime(date.getTime() + 10 * 24 * 60 * 60 * 1000);
                 setCookie('access_token', response.data.data.token, {path: '/', expires: date})
                 navigate('/admin/home');
                 showToast(true, "Successfully login.")
@@ -66,11 +66,9 @@ const Login = () => {
             <div className="flex flex-col w-full mx-5 sm:w-1/2 h-1/2 border p-5 justify-center items-center">
                 <form className="flex flex-col w-full">
                     <div className="text-4xl font-bold">Masuk</div>
-
                     <label htmlFor="username" className="mt-5">Username</label>
                     <input className="p-2 mt-2 border" type="text" onChange={(e) => setUsername(e.target.value)}
                            required/>
-
                     <label htmlFor="password" className="mt-5">Password</label>
                     <input className="p-2 mt-2 border" type="password" onChange={(e) => setPassword(e.target.value)}
                            required/>
