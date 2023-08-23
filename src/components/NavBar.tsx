@@ -32,8 +32,11 @@ export default function NavBar() {
                     className={`absolute top-0 z-50 bg-primaryColor h-screen 
                 w-1/2 ${!menuHidden ? '-translate-x-5' : '-translate-x-80'} 
                 translate-y-14 sm:translate-x-0 sm:-translate-y-2.5 flex flex-col sm:static sm:flex sm:h-min sm:flex-row  sm:w-min`}>
-                    <ul className="px-5 pt-2 sm:pt-0 sm:flex sm:gap-5">
+                    <ul className="px-5 pt-2 sm:pt-0 sm:flex sm:gap-5 w-max">
                         <li className="pt-5"><Link to={'/'}>Home</Link></li>
+                        <li className="mt-5 bg-secondaryColor px-2 rounded"><a
+                            href="https://efilm-restfulapi.dimasfebriyant1.repl.co/"
+                            target="_blank">API Documentation</a></li>
                         {cookie.access_token == undefined ?
                             <>
                                 <li className="mt-5"><Link to={'/login'}>Login</Link></li>
