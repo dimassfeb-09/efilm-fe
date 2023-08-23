@@ -10,9 +10,10 @@ export default function AdminNavBar() {
             <div className="px-2 py-1 border rounded-md">
                 <Link to={'/admin/movie'}>Movie</Link>
             </div>
-            <div className="px-2 py-1 border rounded-md">Actors</div>
+            <div className="px-2 py-1 border rounded-md">
+                <Link to={'/admin/genre'}>Genre</Link>
+            </div>
             <div className="px-2 py-1 border rounded-md">Directors</div>
-            <div className="px-2 py-1 border rounded-md">Genre</div>
         </div>
     </div>;
 }
