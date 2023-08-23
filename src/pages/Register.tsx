@@ -30,10 +30,7 @@ const Register = () => {
                 password: password,
             })
 
-            console.log(response)
-
             if (response.data.code == 200) {
-                console.log("masok")
                 showToast(true, "Successfully created user.")
             }
 
