@@ -1,0 +1,2492 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Open Service eFilm API",
+    "description": "The Open Service eFilm API defines an HTTP(S) interface between Platforms and Service Films.",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "contact": {
+      "name": "Dimas Febriyanto",
+      "url": "https://dimassfeb.my.id",
+      "email": "dimassfeb@gmail.com"
+    },
+    "version": "master - might contain changes that are not yet released"
+  },
+  "servers": [
+    {
+      "url": "https://efilm-api-project.fly.dev",
+      "description": "eFilm API Endpoint"
+    }
+  ],
+  "paths": {
+    "/api/users/info": {
+      "post": {
+        "summary": "Validate token and getting user info",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "users.info.get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Success getting info users"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user_id": {
+                          "type": "integer",
+                          "example": 30
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "dimassfeb"
+                        },
+                        "expired_date": {
+                          "type": "string",
+                          "example": "2023-08-04T19:25:42.229484Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "auth.login.post",
+        "requestBody": {
+          "required": true,
+          "description": "Payload for login user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register user",
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "auth.register.post",
+        "requestBody": {
+          "required": true,
+          "description": "Payload for register user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Response Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/nationals": {
+      "post": {
+        "summary": "Add new national",
+        "tags": [
+          "National"
+        ],
+        "operationId": "national.post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NationalsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all national",
+        "tags": [
+          "National"
+        ],
+        "operationId": "national.get.all",
+        "responses": {
+          "200": {
+            "description": "Response Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponseNationalSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/nationals/search": {
+      "get": {
+        "summary": "Get national by name",
+        "tags": [
+          "National"
+        ],
+        "operationId": "national.get.search",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Name of the national to get"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "national response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponseNationalSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/nationals/{id}": {
+      "get": {
+        "summary": "Get the national by id",
+        "tags": [
+          "National"
+        ],
+        "operationId": "national.get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponseNationalSuccess"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update data national",
+        "tags": [
+          "National"
+        ],
+        "operationId": "national.put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the national",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NationalsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete data national",
+        "tags": [
+          "National"
+        ],
+        "operationId": "national.delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the national",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/actors": {
+      "post": {
+        "summary": "add new actors",
+        "tags": [
+          "Actors"
+        ],
+        "operationId": "actors.post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActorsRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/201"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all actors",
+        "tags": [
+          "Actors"
+        ],
+        "operationId": "actors.get.all",
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponseActorSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/actors/search": {
+      "get": {
+        "summary": "Get actors by national_id or name",
+        "tags": [
+          "Actors"
+        ],
+        "operationId": "actors.get.search",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Name of the actors to get"
+          },
+          {
+            "in": "query",
+            "name": "national_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "Numeric ID of the national to get"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "actors response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponseActorSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/actors/{id}": {
+      "get": {
+        "summary": "Get the actors by id",
+        "tags": [
+          "Actors"
+        ],
+        "operationId": "actors.get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponseActorSuccess"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update data actors",
+        "tags": [
+          "Actors"
+        ],
+        "operationId": "actors.put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the actors",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActorsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete data actors",
+        "tags": [
+          "Actors"
+        ],
+        "operationId": "actors.delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the actors",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/directors": {
+      "post": {
+        "summary": "Add new data Directors",
+        "tags": [
+          "Directors"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DirectorsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/201"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all data Directors",
+        "tags": [
+          "Directors"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponseDirectorSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/directors/search": {
+      "get": {
+        "summary": "Get directors by name or national_id",
+        "tags": [
+          "Directors"
+        ],
+        "operationId": "directors.get.search",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Name of the directors to get"
+          },
+          {
+            "in": "query",
+            "name": "national_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "National ID of the directors to get"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "directors response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponseDirectorSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/directors/{id}": {
+      "get": {
+        "summary": "Get Directors by ID",
+        "tags": [
+          "Directors"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponseDirectorSuccess"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Add new data Directors",
+        "tags": [
+          "Directors"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DirectorsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/201"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete data Directors",
+        "tags": [
+          "Directors"
+        ],
+        "operationId": "directors.delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the actors",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/genres": {
+      "post": {
+        "summary": "Add new data Genres",
+        "tags": [
+          "Genres"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenresRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/201"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all data Genres",
+        "tags": [
+          "Genres"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponseGenreSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/genres/search": {
+      "get": {
+        "summary": "Get genres by name",
+        "tags": [
+          "Genres"
+        ],
+        "operationId": "genres.get.search",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Name of the genres to get"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "genres response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponseGenreSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/genres/{id}": {
+      "get": {
+        "summary": "Get Genres by ID",
+        "tags": [
+          "Genres"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponseGenreSuccess"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update data Genres",
+        "tags": [
+          "Genres"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenresRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/201"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete data genres",
+        "tags": [
+          "Genres"
+        ],
+        "operationId": "genres.put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the actors",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/movies": {
+      "post": {
+        "summary": "add new movie",
+        "tags": [
+          "Movie"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          }
+        ],
+        "operationId": "movie.post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoviesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Success created movie"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "movie_id": {
+                          "type": "integer",
+                          "example": 30
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response Success Add Movies"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all movie",
+        "tags": [
+          "Movie"
+        ],
+        "operationId": "movie.get.all",
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponseMovieSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/movies/search": {
+      "get": {
+        "summary": "Get movie by name, release date",
+        "tags": [
+          "Movie"
+        ],
+        "operationId": "movie.get.search",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Name of the movie to get"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "movie response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponseMovieSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/movies/{id}": {
+      "get": {
+        "summary": "Get the movie by id",
+        "tags": [
+          "Movie"
+        ],
+        "operationId": "movie.get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponseMovieSuccess"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update data movie",
+        "tags": [
+          "Movie"
+        ],
+        "operationId": "movie.put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the movie",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoviesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete data movie",
+        "tags": [
+          "Movie"
+        ],
+        "operationId": "movie.delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the movie",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/movies/{movie_id}/actors": {
+      "post": {
+        "summary": "Add a new actor to a movie",
+        "tags": [
+          "Movie Actor"
+        ],
+        "operationId": "movie.actors.post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "actor_id",
+                  "role"
+                ],
+                "properties": {
+                  "actor_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "Lead Actor"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get a list of actors with a specific movie",
+        "tags": [
+          "Movie Actor"
+        ],
+        "operationId": "movie.actors.get.all",
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponseMovieActorSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movies/{movie_id}/actors/{actor_id}": {
+      "put": {
+        "summary": "Update the role of an actors in a movie",
+        "tags": [
+          "Movie Actor"
+        ],
+        "operationId": "movie.actors.put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "example": 2,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "actor_id",
+            "in": "path",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "role"
+                ],
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "example": "Lead Actor"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove an actor from a movie",
+        "tags": [
+          "Movie Actor"
+        ],
+        "operationId": "movie.actors.delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "example": 2,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "actor_id",
+            "in": "path",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          }
+        }
+      }
+    },
+    "/api/movies/{movie_id}/directors": {
+      "post": {
+        "summary": "Add a new director to a movie",
+        "tags": [
+          "Movie Director"
+        ],
+        "operationId": "movie.directors.post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "director_id"
+                ],
+                "properties": {
+                  "director_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get a list of directors with a specific movie",
+        "tags": [
+          "Movie Director"
+        ],
+        "operationId": "movie.directors.get.all",
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponseMovieDirectorSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movies/{movie_id}/directors/{director_id}": {
+      "delete": {
+        "summary": "Remove an director from a movie",
+        "tags": [
+          "Movie Director"
+        ],
+        "operationId": "movie.directors.delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "example": 2,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "director_id",
+            "in": "path",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          }
+        }
+      }
+    },
+    "/api/movies/{movie_id}/genres": {
+      "post": {
+        "summary": "Add a new genre to a movie",
+        "tags": [
+          "Movie Genre"
+        ],
+        "operationId": "movie.genres.post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "genre_id"
+                ],
+                "properties": {
+                  "genre_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get a list of genres with a specific movie",
+        "tags": [
+          "Movie Genre"
+        ],
+        "operationId": "movie.genres.get.all",
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Get data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponseMovieGenreSuccess"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movies/{movie_id}/genres/{genre_id}": {
+      "delete": {
+        "summary": "Remove an genre from a movie",
+        "tags": [
+          "Movie Genre"
+        ],
+        "operationId": "movie.genres.delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Getting from Auth Login",
+            "schema": {
+              "type": "string",
+              "example": "Bearer {{token}}"
+            }
+          },
+          {
+            "name": "movie_id",
+            "in": "path",
+            "required": true,
+            "example": 2,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "genre_id",
+            "in": "path",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "qwertyio"
+          },
+          "password": {
+            "type": "string",
+            "example": "passuser123"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully login with username qwertyio"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+              }
+            }
+          }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "qwertyio"
+          },
+          "password": {
+            "type": "string",
+            "example": "passuser123"
+          }
+        }
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully created user"
+          }
+        }
+      },
+      "NationalsRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Indonesia"
+          }
+        }
+      },
+      "NationalsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Korea Selatan"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2023-03-04T19:25:42.229484Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2023-03-04T19:25:42.229484Z"
+          }
+        }
+      },
+      "GetResponseNationalSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get genres"
+          },
+          "data": {
+            "$ref": "#/components/schemas/NationalsResponse"
+          }
+        }
+      },
+      "GetAllResponseNationalSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get all national"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NationalsResponse"
+            }
+          }
+        }
+      },
+      "ActorsRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "date_of_birth",
+          "nationality_id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Lee Ji Eun"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "example": "1992-10-19"
+          },
+          "nationality_id": {
+            "type": "number",
+            "example": 1
+          }
+        }
+      },
+      "ActorsResponse": {
+        "type": "object",
+        "required": [
+          "name",
+          "date_of_birth",
+          "nationality_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Lee Ji Eun"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "example": "1992-10-19T00:00:00Z"
+          },
+          "nationality_id": {
+            "type": "number",
+            "example": 1
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2023-08-04T19:25:42.229484Z"
+          },
+          "update_at": {
+            "type": "string",
+            "example": "2023-08-04T19:25:42.229484Z"
+          }
+        }
+      },
+      "GetResponseActorSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get actors"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ActorsResponse"
+          }
+        }
+      },
+      "GetAllResponseActorSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get all actors"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActorsResponse"
+            }
+          }
+        }
+      },
+      "DirectorsRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "date_of_birth",
+          "nationality_id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Lee Ji Eun"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "example": "1992-10-19"
+          },
+          "nationality_id": {
+            "type": "number",
+            "example": 1
+          }
+        }
+      },
+      "DirectorsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Lee Ji Suk"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "example": "1992-05-19T00:00:00Z"
+          },
+          "nationality_id": {
+            "type": "number",
+            "example": 1
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2023-03-04T19:25:42.229484Z"
+          },
+          "update_at": {
+            "type": "string",
+            "example": "2023-07-04T19:25:42.229484Z"
+          }
+        }
+      },
+      "GetResponseDirectorSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get actors"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DirectorsResponse"
+          }
+        }
+      },
+      "GetAllResponseDirectorSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get all directors"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DirectorsResponse"
+            }
+          }
+        }
+      },
+      "GenresRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Drama Korea"
+          }
+        }
+      },
+      "GenresResponse": {
+        "type": "object",
+        "properties": {
+          "genre_id": {
+            "type": "number",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Action"
+          }
+        }
+      },
+      "GetResponseGenreSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get genres"
+          },
+          "data": {
+            "$ref": "#/components/schemas/GenresResponse"
+          }
+        }
+      },
+      "GetAllResponseGenreSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get all genres"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GenresResponse"
+            }
+          }
+        }
+      },
+      "MoviesRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "title",
+          "release_date",
+          "duration",
+          "plot",
+          "poster_url",
+          "trailer_url",
+          "language"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Vagabond"
+          },
+          "release_date": {
+            "type": "string",
+            "example": 2019
+          },
+          "duration": {
+            "type": "string",
+            "example": 110
+          },
+          "plot": {
+            "type": "string",
+            "example": "Cha Dal-Geon (Lee Seung-Gi) is a stunt man..."
+          },
+          "poster_url": {
+            "type": "string",
+            "example": "https://asianwiki.com/images/f/f9/Vagabond_%28Korean_Drama%29-P1.jpg"
+          },
+          "trailer_url": {
+            "type": "string",
+            "example": "https://www.youtube.com/watch?v=tyhnEHCUtv4"
+          },
+          "language": {
+            "type": "string",
+            "example": "Korean / Hangeul"
+          }
+        }
+      },
+      "MoviesResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Vagabond"
+          },
+          "release_date": {
+            "type": "string",
+            "example": 2019
+          },
+          "duration": {
+            "type": "string",
+            "example": 110
+          },
+          "plot": {
+            "type": "string",
+            "example": "Cha Dal-Geon (Lee Seung-Gi) is a stunt man..."
+          },
+          "poster_url": {
+            "type": "string",
+            "example": "https://asianwiki.com/images/f/f9/Vagabond_%28Korean_Drama%29-P1.jpg"
+          },
+          "trailer_url": {
+            "type": "string",
+            "example": "https://www.youtube.com/watch?v=tyhnEHCUtv4"
+          },
+          "language": {
+            "type": "string",
+            "example": "Korean / Hangeul"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2023-03-04T19:25:42.229484Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2023-03-04T19:25:42.229484Z"
+          }
+        }
+      },
+      "GetResponseMovieSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get genres"
+          },
+          "data": {
+            "$ref": "#/components/schemas/MoviesResponse"
+          }
+        }
+      },
+      "GetAllResponseMovieSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get all movies"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MoviesResponse"
+            }
+          }
+        }
+      },
+      "MovieActorsResponse": {
+        "type": "object",
+        "properties": {
+          "movie_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "example": "Vagabond"
+          },
+          "release_date": {
+            "type": "string",
+            "example": "1972-10-06T00:00:00.000Z"
+          }
+        }
+      },
+      "GetResponseMovieActorSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get genres"
+          },
+          "data": {
+            "properties": {
+              "movie": {
+                "$ref": "#/components/schemas/MovieActorsResponse"
+              },
+              "actors": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ActorsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MovieDirectorsResponse": {
+        "type": "object",
+        "properties": {
+          "movie_id": {
+            "type": "integer",
+            "example": "Vagabond"
+          },
+          "title": {
+            "type": "string",
+            "example": "Vagabond"
+          },
+          "release_date": {
+            "type": "string",
+            "example": "1972-10-06T00:00:00.000Z"
+          }
+        }
+      },
+      "GetResponseMovieDirectorSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get genres"
+          },
+          "data": {
+            "properties": {
+              "movie": {
+                "$ref": "#/components/schemas/MovieDirectorsResponse"
+              },
+              "directors": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DirectorsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MovieGenresResponse": {
+        "type": "object",
+        "properties": {
+          "movie_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "example": "Vagabond"
+          },
+          "release_date": {
+            "type": "string",
+            "example": "2023-03-04T19:25:42.229484Z"
+          }
+        }
+      },
+      "GetResponseMovieGenreSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Get genres"
+          },
+          "data": {
+            "properties": {
+              "movie": {
+                "$ref": "#/components/schemas/MovieGenresResponse"
+              },
+              "genres": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GenresResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Response if successful",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "example": 200
+                },
+                "status": {
+                  "type": "string",
+                  "example": "OK"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Successfully"
+                }
+              }
+            }
+          }
+        }
+      },
+      "201": {
+        "description": "Response if successful has created new data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "example": 201
+                },
+                "status": {
+                  "type": "string",
+                  "example": "Status Created"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Successfully created data"
+                }
+              }
+            }
+          }
+        }
+      },
+      "204": {
+        "description": "Response if successful has deleted data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "example": 200
+                },
+                "status": {
+                  "type": "string",
+                  "example": "Status No Content"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Successfully created data"
+                }
+              }
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Response if the request payload does not complete",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "example": 400
+                },
+                "status": {
+                  "type": "string",
+                  "example": "Status Bad Request"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Request playload is Required"
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Response Failed Data Not Found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "example": 404
+                },
+                "status": {
+                  "type": "string",
+                  "example": "Status Not Found"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Data Not Found"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -8,6 +8,7 @@ import MovieDetail from "./pages/MoviesDetail.tsx";
 import Admin from "./pages/Admin.tsx";
 import AdminMovie from "./pages/AdminMovie.tsx";
 import Genres from "./pages/Genres.tsx";
+import AdminGenre from "./pages/AdminGenre.tsx";
 
 const App = () => {
     return (
@@ -22,6 +23,7 @@ const App = () => {
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/admin/home" element={<Admin/>}/>
                 <Route path="/admin/movie" element={<AdminMovie/>}/>
+                <Route path="/admin/genre" element={<AdminGenre/>}/>
             </Routes>
         </>
     );

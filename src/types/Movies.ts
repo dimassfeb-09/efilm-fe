@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type MoviesType = {
-    id: number;
+    id?: number;
     title: string;
     trailer_url: string;
     duration: string;
@@ -8,7 +8,7 @@ type MoviesType = {
     plot: string;
     poster_url: string;
     release_date: string;
-    created_at: string;
-    updated_at: string;
-    genres?: GenresType[];
+    genre_ids: number[] | null;
+    created_at?: string;
+    updated_at?: string;
 }

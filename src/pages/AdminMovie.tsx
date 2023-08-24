@@ -1,18 +1,16 @@
 import AdminNavBar from "./Admin.tsx";
 import axios from "axios";
 import {useEffect, useState} from "react";
+import ShowDialogUpdateMovie from "../components/ShowDialogUpdateMovie.tsx";
 import ShowDialogAddMovie from "../components/ShowDialogAddMovie.tsx";
-import {TypeOperation} from "../types/TypeOperation.tsx";
 import ShowDialogDeleteMovie from "../components/ShowDialogDeleteMovie.tsx";
 
 const AdminMovie = () => {
 
     const [movies, setMovies] = useState<MoviesType[] | null>(null);
-    const [genreDataFetched, setGenreDataFetched] = useState<boolean>(false);
-    const [open, setOpen] = useState<boolean>(false);
-    const [typeOperation, setTypeOperation] = useState<TypeOperation>(TypeOperation.Add);
     const [movie, setMovie] = useState<MoviesType | null>(null);
-
+    const [openAdd, setOpenAdd] = useState<boolean>(false);
+    const [openUpdate, setOpenUpdate] = useState<boolean>(false);
     const [openDelete, setOpenDelete] = useState<boolean>(false);
 
     const fetchDataMovies = async () => {
@@ -27,74 +25,60 @@ const AdminMovie = () => {
         }
     }
 
-    const getGenreMovie = async () => {
-        try {
-            const APIURL = import.meta.env.VITE_URL_API;
-            const newMovie = movies?.map(async (movie) => {
-                const response = await axios.get(`${APIURL}/movies/${movie.id}/genres`);
-                return {
-                    ...movie,
-                    genres: response.data.data.genres
-                };
-            });
-
-            if (newMovie) {
-                const updatedMovies = await Promise.all(newMovie);
-                setMovies(updatedMovies);
-                setGenreDataFetched(true);
-            }
-
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    const handleOpenDelete = (movie: MoviesType) => {
-        setOpenDelete(!openDelete);
-        setMovie(movie);
-    }
-
-    const handleCloseAdd = () => {
-        setOpen(false);
-    }
-
-    const handleCloseDelete = () => {
-        setOpenDelete(false);
-    }
 
     const handleOpenAdd = () => {
-        setOpen(!open);
-        setTypeOperation(TypeOperation.Add)
+        setOpenAdd(true);
     }
 
     const handleOpenUpdate = (movie: MoviesType) => {
         setMovie(movie)
-        setOpen(!open);
-        setTypeOperation(TypeOperation.Update)
+        setOpenUpdate(true);
+    }
+
+    const handleOpenDelete = (movie: MoviesType) => {
+        setMovie(movie)
+        setOpenDelete(true);
+    }
+
+    const handleCloseAdd = () => {
+        setOpenAdd(false);
+        setMovie(null);
+    }
+
+    const handleCloseUpdate = () => {
+        setOpenUpdate(false);
+        setMovie(null);
+    }
+
+
+    const handleCloseDelete = () => {
+        setOpenDelete(false);
+        setMovie(null);
     }
 
     useEffect(() => {
         fetchDataMovies();
     }, [])
 
-    useEffect(() => {
-        if (!genreDataFetched && movies) {
-            getGenreMovie();
-        }
-    }, [movies]);
-
-    useEffect(() => {
-        if (!open && !openDelete) {
-            setMovie(null);
-        }
-    }, []);
-
 
     return <div className="w-full flex justify-center">
         <div className="w-full bg-white">
             <AdminNavBar/>
-            <ShowDialogDeleteMovie open={openDelete} handleOpen={handleCloseDelete} movieId={movie?.id}/>
-            <ShowDialogAddMovie open={open} handleOpen={handleCloseAdd} type={typeOperation} movie={movie}/>
+            <ShowDialogAddMovie
+                open={openAdd}
+                handleClose={handleCloseAdd}
+                movie={movie}
+                setMovie={setMovie}/>
+            <ShowDialogUpdateMovie
+                open={openUpdate}
+                handleClose={handleCloseUpdate}
+                movie={movie}
+                setMovie={setMovie}
+            />
+            <ShowDialogDeleteMovie
+                open={openDelete}
+                handleClose={handleCloseDelete}
+                movieId={movie?.id}/>
             <button
                 onClick={handleOpenAdd}
                 className="flex items-center mx-5 my-3 justify-center w-1/2 px-5 py-2 text-sm
@@ -136,7 +120,8 @@ const AdminMovie = () => {
                                         <div>
                                             <div
                                                 className="font-medium text-gray-700 w-max">{movie.title}</div>
-                                            <div className="text-blue-500"><a href={movie.trailer_url}>Trailer</a></div>
+                                            <div className="text-blue-500"><a href={movie.trailer_url}
+                                                                              target="_blank">Trailer</a></div>
                                         </div>
                                         <div
                                             className="bg-secondaryColor text-white w-max px-2 rounded text-xs">ID {movie.id}</div>
@@ -149,12 +134,10 @@ const AdminMovie = () => {
                                 <td className="px-6 py-4">{movie.duration} minutes</td>
                                 <td className="px-6 py-4">
                                     <div className="flex gap-2">
-                                        {movie.genres == null ? '-' : movie.genres?.map((genre) => {
-                                            return <span className="inline-flex items-center gap-1 rounded-full bg-blue-50
-                                                px-2 py-1 text-xs font-semibold text-blue-600" key={genre.genre_id}>
-                                                {genre.name}
-                                        </span>;
-                                        })}
+                                        {movie.genre_ids?.map((genre_id) => <span className="inline-flex items-center gap-1 rounded-full bg-blue-50
+                                                px-2 py-1 text-xs font-semibold text-blue-600" key={genre_id}>
+                                            {genre_id}
+                                        </span>)}
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
