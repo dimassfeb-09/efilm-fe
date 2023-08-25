@@ -94,6 +94,10 @@ const AdminMovie = () => {
         setMovie(null);
     }
 
+    const handleUpdateData = ()=> {
+        fetchDataMovies();
+    }
+
     useEffect(() => {
         fetchDataMovies();
     }, [])
@@ -107,6 +111,7 @@ const AdminMovie = () => {
                 handleClose={handleCloseAdd}
                 movie={movie}
                 setMovie={setMovie}
+                handleUpdateData={handleUpdateData}
             />
             <ShowDialogUpdateMovie
                 open={openUpdate}

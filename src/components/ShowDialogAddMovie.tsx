@@ -11,6 +11,7 @@ type propsShowDialog = {
     setMovie: Dispatch<SetStateAction<MoviesType | null>>;
     open: boolean;
     handleClose: () => void;
+    handleUpdateData: ()=> void;
 }
 
 
@@ -18,7 +19,6 @@ interface Option {
     key: number;
     label: string;
     value: string;
-
 }
 
 const ShowDialogAddMovie = (props: propsShowDialog) => {
@@ -50,14 +50,20 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
                 genre_ids: props.movie?.genre_ids,
             };
 
-            await axios.post(`${APIURL}/movies`, data, {
+            const res = await axios.post(`${APIURL}/movies`, data, {
                     headers: {
                         'Authorization': `Bearer ${cookie.access_token}`
                     }
                 }
             )
-            showToast(true, 'Successfully add movies')
-            handleClose();
+
+            const statusCode = res.data.code;
+            if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, 'Successfully add movies')
+                handleClose();
+                props.handleUpdateData();
+            }
+
         } catch (e) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
