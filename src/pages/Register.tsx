@@ -1,4 +1,4 @@
-import {useState} from "react";
+import React, {useState} from "react";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import showToast from "../components/toast.tsx";
@@ -15,7 +15,9 @@ const Register = () => {
     const [username, setUsername] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
 
         try {
             if (username == "") {
@@ -47,7 +49,7 @@ const Register = () => {
     return (
         <div className="flex justify-center -translate-y-20 items-center h-screen w-full">
             <div className="flex flex-col w-full mx-5 sm:w-1/2 h-1/2 border p-5 justify-center items-center">
-                <form className="flex flex-col w-full">
+                <form className="flex flex-col w-full" onSubmit={handleSubmit}>
                     <div className="text-4xl font-bold">Daftar</div>
 
                     <label htmlFor="username" className="mt-5">Username</label>
@@ -57,10 +59,10 @@ const Register = () => {
                     <label htmlFor="password" className="mt-5">Password</label>
                     <input className="p-2 mt-2 border" type="password" onChange={(e) => setPassword(e.target.value)}
                            required/>
+                    <button className="mt-10 border p-3 w-min px-10 rounded-md bg-primaryColor text-white">Daftar
+                    </button>
                 </form>
-                <button className="mt-10 border p-3 w-min px-10 rounded-md bg-primaryColor text-white"
-                        onClick={handleSubmit}>Daftar
-                </button>
+
             </div>
             <ToastContainer></ToastContainer>
         </div>

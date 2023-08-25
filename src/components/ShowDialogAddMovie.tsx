@@ -96,7 +96,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
             language: language ?? '',
             genre_ids: genreIds ?? null,
         })
-    }, [title, releaseDate, duration, plot, posterUrl, language, genreIds]);
+    }, [title, releaseDate, duration, plot, posterUrl, trailerUrl, language, genreIds]);
 
     return (
         <Dialog open={props.open} onClose={handleClose}>

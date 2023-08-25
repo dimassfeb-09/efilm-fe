@@ -8,7 +8,7 @@ type MoviesType = {
     plot: string;
     poster_url: string;
     release_date: string;
-    genre_ids: number[] | null;
+    genre_ids?: number[] | null;
     created_at?: string;
     updated_at?: string;
 }

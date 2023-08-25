@@ -1,9 +1,7 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import axios from "axios";
-import {useCookies} from "react-cookie";
 
-import showToast from "./toast.tsx";
 import Select from "react-select";
 
 type propsShowDialog = {
@@ -11,6 +9,7 @@ type propsShowDialog = {
     setMovie: Dispatch<SetStateAction<MoviesType | null>>;
     open: boolean;
     handleClose: () => void;
+    handleSubmit: ()=> void;
 }
 
 
@@ -31,38 +30,12 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
     const [language, setLanguage] = useState<string | null>(null);
     const [genreIds, setGenreIds] = useState<number[] | null>(null);
 
+    const [selected, setSelected] = useState<Option[]>([]);
     const [options, setOptions] = useState<Option[]>([]);
-    const [cookie,] = useCookies(['access_token'])
+
+    const [loading, setLoading] = useState<boolean>(false);
 
     const APIURL = import.meta.env.VITE_URL_API;
-
-    const handleSubmit = async () => {
-        try {
-            const data = {
-                title: props.movie?.title,
-                release_date: props.movie?.release_date,
-                duration: Number(props.movie?.duration),
-                plot: props.movie?.plot,
-                poster_url: props.movie?.poster_url,
-                trailer_url: props.movie?.trailer_url,
-                language: props.movie?.language,
-                genre_ids: props.movie?.genre_ids,
-            };
-
-            await axios.put(`${APIURL}/movies/${props.movie?.id}`, data, {
-                    headers: {
-                        'Authorization': `Bearer ${cookie.access_token}`
-                    }
-                }
-            )
-            showToast(true, 'Successfully update movies')
-            props.handleClose();
-        } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            showToast(false, String(e.response.data.message));
-        }
-    }
 
     const fetchDataGenres = async () => {
         await axios.get(`${APIURL}/genres`).then((res) => {
@@ -73,6 +46,14 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
             setOptions(opts);
         });
     };
+
+    const handleSubmit = ()=> {
+        setLoading(true);
+        props.handleSubmit()
+        setTimeout(()=> {
+            setLoading(false);
+        }, 1000)
+    }
 
     useEffect(() => {
         fetchDataGenres();
@@ -88,9 +69,16 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
             poster_url: posterUrl ?? props.movie?.poster_url ?? '',
             trailer_url: trailerUrl ?? props.movie?.trailer_url ?? '',
             language: language ?? props.movie?.language ?? '',
-            genre_ids: genreIds ?? props.movie?.genre_ids ?? null,
+            genre_ids: genreIds ?? props.movie?.genre_ids,
         })
-    }, [title, releaseDate, duration, plot, posterUrl, language, genreIds]);
+    }, [title, releaseDate, duration, plot, posterUrl, language, genreIds, trailerUrl]);
+
+    useEffect(() => {
+        setGenreIds(genreIds ?? props.movie?.genre_ids ?? null)
+        const filteredOptions = options.filter(option => genreIds?.includes(option.key));
+        setSelected(filteredOptions)
+    }, [genreIds,props.movie?.genre_ids]);
+
 
     return (
         <Dialog open={props.open} onClose={props.handleClose}>
@@ -184,18 +172,17 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                 <Select
                     isMulti
                     name="colors"
+                    value={selected}
                     options={options}
                     className="basic-multi-select mt-5 mb-52"
                     classNamePrefix="select"
                     hideSelectedOptions={true}
-                    onChange={(select) => {
-                        setGenreIds(select.map((value) => value.key));
-                    }}
+                    onChange={(select) => setGenreIds(select.map((value) => value.key))}
                 />
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.handleClose}>CANCEL</Button>
-                <Button onClick={handleSubmit}>SUBMIT</Button>
+                <Button onClick={handleSubmit} disabled={loading}>{loading ? 'Loading...': 'SUBMIT'}</Button>
             </DialogActions>
         </Dialog>
     );

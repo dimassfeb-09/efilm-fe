@@ -57,7 +57,6 @@ const Login = () => {
 
     useEffect(() => {
         const access_token = cookie.access_token;
-        console.log(access_token)
         if (access_token != undefined) {
             navigate('/admin/home');
         }
@@ -78,8 +77,6 @@ const Login = () => {
                     >Login
                     </button>
                 </form>
-
-
             </div>
             <ToastContainer/>
         </div>

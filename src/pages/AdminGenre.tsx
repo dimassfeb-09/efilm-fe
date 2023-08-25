@@ -1,22 +1,32 @@
 import AdminNavBar from "./Admin.tsx";
 import axios from "axios";
 import {useEffect, useState} from "react";
+import ShowDialogAddGenre from "../components/ShowDialogAddGenre.tsx";
+import showToast from "../components/toast.tsx";
+import {useCookies} from "react-cookie";
+import ShowDialogDeleteGenre from "../components/ShowDialogDeleteGenre.tsx";
+import ShowDialogUpdateGenre from "../components/ShowDialogUpdateGenre.tsx";
 
 const AdminGenre = () => {
 
     const [genres, setGenres] = useState<GenresType[] | null>(null);
-    const [open, setOpen] = useState<boolean>(false);
+    const [genre, setGenre] = useState<GenresType|null>(null);
+
+    const [openAdd, setOpenAdd] = useState<boolean>(false);
+    const [openUpdate, setOpenUpdate] = useState<boolean>(false);
+    const [openDelete, setOpenDelete] = useState<boolean>(false);
+
+    const APIURL = import.meta.env.VITE_URL_API;
+    const [cookie,] = useCookies(['access_token'])
 
     const fetchDataGenres = async () => {
         try {
-            const APIURL = import.meta.env.VITE_URL_API;
             const response = await axios.get(`${APIURL}/genres`)
 
             const dataGenres = response.data.data;
             const data = dataGenres.map((dataGenre: { id: number, name: string }) => {
                 return {genre_id: dataGenre.id, name: dataGenre.name}
             })
-
             const sortedMovies = [...data].sort((a, b) => a.genre_id - b.genre_id);
             setGenres(sortedMovies);
         } catch (e) {
@@ -24,24 +34,116 @@ const AdminGenre = () => {
         }
     }
 
+
+    const handleSubmitAdd = async () => {
+        try {
+            const data = {
+                name: genre?.name,
+            };
+            const res = await axios.post(`${APIURL}/genres`, data, {
+                    headers: {
+                        'Authorization': `Bearer ${cookie.access_token}`
+                    }
+                }
+            )
+
+            const statusCode = res.data.code;
+            if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, 'Successfully add genres')
+                handleCloseAdd();
+                fetchDataGenres();
+            }
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            showToast(false, String(e.response.data.message));
+        }
+    }
+
+    const handleSubmitUpdate = async () => {
+        try {
+            const data = {
+                name: genre?.name,
+            };
+            const res = await axios.put(`${APIURL}/genres/${genre?.genre_id}`, data, {
+                    headers: {
+                        'Authorization': `Bearer ${cookie.access_token}`
+                    }
+                }
+            )
+
+            const statusCode = res.data.code;
+            if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, 'Successfully update genres')
+                handleCloseUpdate();
+                fetchDataGenres();
+            }
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            showToast(false, String(e.response.data.message));
+        }
+    }
+
+    const handleSubmitDelete = async () => {
+        try {
+            const res = await axios.delete(`${APIURL}/genres/${genre?.genre_id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${cookie.access_token}`
+                    }
+                }
+            )
+
+            const statusCode = res.data.code;
+            if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, 'Successfully deleted genre')
+                handleCloseDelete();
+                fetchDataGenres();
+            }
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if (String(e.response.data.message).includes("foreign key")) {
+                showToast(false, "Cannot delete data due to a foreign key constraint.");
+            } else {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                showToast(false, String(e.response.data.message));
+            }
+            handleCloseDelete();
+        }
+    }
+
+
     const handleOpenAdd = () => {
-        setOpen(!open);
+        setOpenAdd(true);
     }
 
-    const handleOpenUpdate = (genre: GenresType) => {
-        setOpen(!open);
-        setGenre(genre);
-    }
-
-    const handleOpenDelete = (genre: GenresType) => {
-        setOpen(!open);
-        setGenre(genre);
-    }
-
-    const handleClose = () => {
-        setOpen(!open);
+    const handleCloseAdd = () => {
+        setOpenAdd(false);
         setGenre(null);
     }
+
+    const handleOpenUpdate = (genre: GenresType | null) => {
+        setGenre(genre);
+        setOpenUpdate(true);
+    }
+
+    const handleCloseUpdate = () => {
+        setOpenUpdate(false);
+        setGenre(null);
+    }
+
+    const handleOpenDelete = (genre: GenresType | null) => {
+        setGenre(genre);
+        setOpenDelete(true);
+    }
+
+    const handleCloseDelete = () => {
+        setOpenDelete(false);
+        setGenre(null);
+    }
+
 
     useEffect(() => {
         fetchDataGenres();
@@ -51,6 +153,9 @@ const AdminGenre = () => {
     return <div className="w-full flex justify-center">
         <div className="w-full">
             <AdminNavBar/>
+            <ShowDialogUpdateGenre genre={genre} setGenre={setGenre} handleClose={handleCloseUpdate} open={openUpdate} handleSubmit={handleSubmitUpdate}/>
+            <ShowDialogAddGenre genre={genre} setGenre={setGenre} handleClose={handleCloseAdd} open={openAdd} handleSubmit={handleSubmitAdd}/>
+            <ShowDialogDeleteGenre genre={genre} setGenre={setGenre} handleClose={handleCloseDelete} open={openDelete} handleSubmit={handleSubmitDelete}/>
             <button
                 onClick={handleOpenAdd}
                 className="flex items-center mx-5 my-3 justify-center w-1/2 px-5 py-2 text-sm
@@ -89,7 +194,7 @@ const AdminGenre = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex justify-end gap-4">
-                                        <button onClick={() => handleOpenDelete(genre)}>
+                                        <button onClick={()=>handleOpenDelete(genre)}>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -105,7 +210,7 @@ const AdminGenre = () => {
                                                 />
                                             </svg>
                                         </button>
-                                        <button onClick={() => handleOpenUpdate(genre)}>
+                                        <button onClick={()=>handleOpenUpdate(genre)}>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"

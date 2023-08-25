@@ -4,18 +4,23 @@ import {useEffect, useState} from "react";
 import ShowDialogUpdateMovie from "../components/ShowDialogUpdateMovie.tsx";
 import ShowDialogAddMovie from "../components/ShowDialogAddMovie.tsx";
 import ShowDialogDeleteMovie from "../components/ShowDialogDeleteMovie.tsx";
+import showToast from "../components/toast.tsx";
+import {useCookies} from "react-cookie";
 
 const AdminMovie = () => {
 
     const [movies, setMovies] = useState<MoviesType[] | null>(null);
     const [movie, setMovie] = useState<MoviesType | null>(null);
+
     const [openAdd, setOpenAdd] = useState<boolean>(false);
     const [openUpdate, setOpenUpdate] = useState<boolean>(false);
     const [openDelete, setOpenDelete] = useState<boolean>(false);
 
+    const [cookie,] = useCookies(['access_token'])
+    const APIURL = import.meta.env.VITE_URL_API;
+
     const fetchDataMovies = async () => {
         try {
-            const APIURL = import.meta.env.VITE_URL_API;
             const response = await axios.get(`${APIURL}/movies`)
             const data = response.data.data;
             const sortedMovies = [...data].sort((a, b) => b.id - a.id);
@@ -25,6 +30,39 @@ const AdminMovie = () => {
         }
     }
 
+    const handleSubmitUpdate = async () => {
+        try {
+            const data = {
+                title: movie?.title,
+                release_date: movie?.release_date,
+                duration: Number(movie?.duration),
+                plot: movie?.plot,
+                poster_url: movie?.poster_url,
+                trailer_url: movie?.trailer_url,
+                language: movie?.language,
+                genre_ids: movie?.genre_ids,
+            };
+
+            const res = await axios.put(`${APIURL}/movies/${movie?.id}`, data, {
+                    headers: {
+                        'Authorization': `Bearer ${cookie.access_token}`
+                    }
+                }
+            )
+
+            const statusCode = res.data.code;
+            if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, 'Successfully update movies')
+                handleCloseUpdate();
+                fetchDataMovies();
+            }
+
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            showToast(false, String(e.response.data.message));
+        }
+    }
 
     const handleOpenAdd = () => {
         setOpenAdd(true);
@@ -68,12 +106,14 @@ const AdminMovie = () => {
                 open={openAdd}
                 handleClose={handleCloseAdd}
                 movie={movie}
-                setMovie={setMovie}/>
+                setMovie={setMovie}
+            />
             <ShowDialogUpdateMovie
                 open={openUpdate}
                 handleClose={handleCloseUpdate}
                 movie={movie}
                 setMovie={setMovie}
+                handleSubmit={handleSubmitUpdate}
             />
             <ShowDialogDeleteMovie
                 open={openDelete}
