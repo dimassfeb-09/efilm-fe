@@ -12,7 +12,6 @@ type propsShowDialog = {
     handleSubmit: ()=> void;
 }
 
-
 interface Option {
     key: number;
     label: string;
@@ -69,16 +68,14 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
             poster_url: posterUrl ?? props.movie?.poster_url ?? '',
             trailer_url: trailerUrl ?? props.movie?.trailer_url ?? '',
             language: language ?? props.movie?.language ?? '',
-            genre_ids: genreIds ?? props.movie?.genre_ids,
+            genre_ids: genreIds ?? props.movie?.genre_ids ?? null,
         })
     }, [title, releaseDate, duration, plot, posterUrl, language, genreIds, trailerUrl]);
 
     useEffect(() => {
-        setGenreIds(genreIds ?? props.movie?.genre_ids ?? null)
-        const filteredOptions = options.filter(option => genreIds?.includes(option.key));
+        const filteredOptions = options.filter(option => props.movie?.genre_ids?.includes(option.key));
         setSelected(filteredOptions)
     }, [genreIds,props.movie?.genre_ids]);
-
 
     return (
         <Dialog open={props.open} onClose={props.handleClose}>
