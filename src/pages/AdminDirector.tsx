@@ -5,19 +5,21 @@ import ShowDialogAddDirector from "../components/ShowDialogAddDirector.tsx";
 import {useCookies} from "react-cookie";
 import showToast from "../components/toast.tsx";
 import ShowDialogAddDirectorToMovie from "../components/ShowDialogAddDirectorToMovie.tsx";
+import ShowDialogDeleteDirector from "../components/ShowDialogDeleteDirector.tsx";
+import ShowDialogUpdateDirector from "../components/ShowDialogUpdateDirector.tsx";
 
 const AdminDirector = () => {
 
     const [openAddDirector, setOpenAddDirector] = useState<boolean>(false);
     const [openAddDirectorToMovie, setOpenAddDirectorToMovie] = useState<boolean>(false);
+    const [openDeleteDirector, setOpenDeleteDirector] = useState<boolean>(false);
+    const [openUpdateDirector, setOpenUpdateDirector] = useState<boolean>(false);
 
     const [directors, setDirectors] = useState<DirectorsType[] | null>(null);
     const [director, setDirector] = useState<DirectorsType | null>(null);
 
     const [cookie,] = useCookies(['access_token'])
     const APIURL = import.meta.env.VITE_URL_API;
-
-
 
     const fetchDataDirectors = async () => {
         try {
@@ -39,7 +41,17 @@ const AdminDirector = () => {
         fetchDataDirectors();
     }, []);
 
-        const handleSubmitAddDirector = async () => {
+    const handleOpenDialogDelete = (director: DirectorsType)=> {
+        setOpenDeleteDirector(true);
+        setDirector(director);
+    }
+
+    const handleOpenDialogUpdate = (director: DirectorsType)=> {
+        setOpenUpdateDirector(true);
+        setDirector(director);
+    }
+
+    const handleSubmitAddDirector = async () => {
             try {
                 if (director?.nationality_id == undefined) {
                     throw Error("National cannot be empty, please select");
@@ -64,15 +76,22 @@ const AdminDirector = () => {
             }
         }
 
-        const handleCloseAddDirector = () => {
+    const handleCloseAddDirector = () => {
             setOpenAddDirector(false);
-        }
+    }
 
     const handleCloseAddDirectorToMovie = () => {
         setOpenAddDirectorToMovie(false);
     }
+    const handleCloseDeleteDirector = () => {
+        setOpenDeleteDirector(false);
+        setDirector(null);
+    }
 
-
+    const handleCloseUpdateDirector = () => {
+        setOpenUpdateDirector(false);
+        setDirector(null);
+    }
 
         return <div className="w-full flex justify-center">
             <div className="w-full">
@@ -90,6 +109,18 @@ const AdminDirector = () => {
                     handleUpdateData={handleUpdateDataDirectors}
                     open={openAddDirectorToMovie}
                 />
+                <ShowDialogDeleteDirector
+                    director={director}
+                    handleClose={handleCloseDeleteDirector}
+                    handleUpdateData={handleUpdateDataDirectors}
+                    open={openDeleteDirector}
+                 />
+                <ShowDialogUpdateDirector
+                    director={director}
+                    handleClose={handleCloseUpdateDirector}
+                    handleUpdateData={handleUpdateDataDirectors}
+                    open={openUpdateDirector}
+                 />
                 <div className="flex">
                     <button
                         onClick={() => setOpenAddDirector(true)}
@@ -141,7 +172,7 @@ const AdminDirector = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex justify-end gap-4">
-                                            <button>
+                                            <button onClick={()=>handleOpenDialogDelete(director)}>
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     fill="none"
@@ -157,7 +188,7 @@ const AdminDirector = () => {
                                                     />
                                                 </svg>
                                             </button>
-                                            <button>
+                                            <button onClick={()=>handleOpenDialogUpdate(director)}>
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     fill="none"

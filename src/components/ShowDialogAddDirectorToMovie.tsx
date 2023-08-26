@@ -82,7 +82,7 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
             const statusCode = res.data.code;
             if (statusCode >= 200 && statusCode < 400) {
                 props.handleClose();
-                showToast(true, "Success created directors")
+                showToast(true, "Success added director to movie")
             }
         } catch (e) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
