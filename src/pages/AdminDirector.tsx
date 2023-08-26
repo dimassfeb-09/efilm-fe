@@ -31,7 +31,6 @@ const AdminDirector = () => {
         }
     }
 
-
     const handleUpdateDataDirectors = ()=> {
         fetchDataDirectors();
     }
@@ -42,18 +41,15 @@ const AdminDirector = () => {
 
         const handleSubmitAddDirector = async () => {
             try {
-
                 if (director?.nationality_id == undefined) {
                     throw Error("National cannot be empty, please select");
                 }
-
                 const res = await axios.post(`${APIURL}/directors`, director, {
                         headers: {
                             'Authorization': `Bearer ${cookie.access_token}`
                         }
                     }
                 )
-
                 const statusCode = res.data.code;
                 if (statusCode >= 200 && statusCode < 400) {
                     setDirectors(res.data.data)

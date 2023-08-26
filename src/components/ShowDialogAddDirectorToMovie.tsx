@@ -85,7 +85,9 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
                 showToast(true, "Success created directors")
             }
         } catch (e) {
-            console.log(e);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            showToast(false, String(e.response.data.message))
         }
     }
 
