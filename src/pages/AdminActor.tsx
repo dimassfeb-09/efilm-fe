@@ -1,118 +1,98 @@
 import AdminNavBar from "./Admin.tsx";
 import axios from "axios";
 import {useEffect, useState} from "react";
-import ShowDialogAddGenre from "../components/ShowDialogAddGenre.tsx";
-import ShowDialogDeleteGenre from "../components/ShowDialogDeleteGenre.tsx";
-import ShowDialogUpdateGenre from "../components/ShowDialogUpdateGenre.tsx";
+import ShowDialogAddActor from "../components/ShowDialogAddActor.tsx";
 
-const AdminGenre = () => {
+const AdminActor = () => {
 
-    const [genres, setGenres] = useState<GenresType[] | null>(null);
-    const [genre, setGenre] = useState<GenresType|null>(null);
+    const [actors, setActors] = useState<ActorsType[] | null>(null);
+    const [openAddActor, setOpenAddActor] = useState<boolean>(false);
 
-    const [openAdd, setOpenAdd] = useState<boolean>(false);
-    const [openUpdate, setOpenUpdate] = useState<boolean>(false);
-    const [openDelete, setOpenDelete] = useState<boolean>(false);
+    const APIURL = import.meta.env.VITE_URL_API;
 
 
-
-    const fetchDataGenres = async () => {
+    const fetchDataActors = async () => {
         try {
-            const APIURL = import.meta.env.VITE_URL_API;
-            const response = await axios.get(`${APIURL}/genres`)
-            const dataGenres = response.data.data;
-            const data = dataGenres.map((dataGenre: { id: number, name: string }) => {
-                return {genre_id: dataGenre.id, name: dataGenre.name}
-            })
-            const sortedMovies = [...data].sort((a, b) => a.genre_id - b.genre_id);
-            setGenres(sortedMovies);
+            const response = await axios.get(`${APIURL}/actors`)
+            const data = response.data.data;
+            const sortedActors = [...data].sort((a, b) => b.id - a.id).map((actor)=> {
+                return {actorId: actor.id, name: actor.name, date_of_birth: actor.date_of_birth, nationality_id: actor.nationality_id};
+            });
+            setActors(sortedActors);
         } catch (e) {
             console.log(e)
         }
     }
 
+    useEffect(() => {
+        fetchDataActors();
+    }, [])
 
 
     const handleUpdateData = ()=> {
-        fetchDataGenres();
-    }
-
-    const handleOpenAdd = () => {
-        setOpenAdd(true);
-    }
-
-
-    const handleOpenUpdate = (genre: GenresType | null) => {
-        setGenre(genre);
-        setOpenUpdate(true);
-    }
-
-    const handleOpenDelete = (genre: GenresType | null) => {
-        setGenre(genre);
-        setOpenDelete(true);
+        fetchDataActors();
     }
 
     const handleClose = ()=> {
-        if (openAdd) {
-            setOpenAdd(false);
-        } else if (openUpdate) {
-            setOpenUpdate(false);
-        } else if (openDelete) {
-            setOpenDelete(false);
+        if (openAddActor) {
+            setOpenAddActor(false);
         }
     }
 
-
-    useEffect(() => {
-        fetchDataGenres();
-    }, []);
-
-
     return <div className="w-full flex justify-center">
-        <div className="w-full">
+        <div className="w-full bg-white">
             <AdminNavBar/>
-            <ShowDialogUpdateGenre genre={genre} handleClose={handleClose} open={openUpdate} handleUpdateData={handleUpdateData}/>
-            <ShowDialogAddGenre handleClose={handleClose} open={openAdd} handleUpdateData={handleUpdateData}/>
-            <ShowDialogDeleteGenre genre={genre} handleClose={handleClose} open={openDelete} handleUpdateData={handleUpdateData}/>
-            <button
-                onClick={handleOpenAdd}
-                className="flex items-center mx-5 my-3 justify-center w-1/2 px-5 py-2 text-sm
+            <ShowDialogAddActor open={openAddActor} handleClose={handleClose} handleUpdateData={handleUpdateData}/>
+            <div className="flex">
+                <button onClick={()=>setOpenAddActor(true)}
+                    className="flex items-center mx-5 my-3 justify-center px-5 py-2 text-sm
                 tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-                     stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round"
-                          d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span>Add Genre</span>
-            </button>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                         stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Add Actor</span>
+                </button>
+                <button
+                    className="flex items-center my-3 justify-center px-5 py-2 text-sm
+                tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                         stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Add Actor To Movie</span>
+                </button>
+            </div>
             <div className="rounded-lg border border-gray-200 shadow-md m-5 overflow-x-scroll">
                 <table className="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <thead className="bg-gray-50">
                     <tr>
                         <th scope="col" className="px-6 py-4 font-medium text-gray-900">ID</th>
-                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">TITLE</th>
+                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">Name</th>
                         <th scope="col" className="px-6 py-4 font-medium text-gray-900">ACTION</th>
                     </tr>
                     </thead>
                     <tbody
                         className="divide-y divide-gray-100 border-t border-gray-100  overflow-x-scroll overflow-auto">
-                    {genres == null ?
+                    {actors == null ?
                         <tr>
                             <td colSpan={5} className="px-6 py-4 whitespace-no-wrap text-center">Loading...</td>
-                        </tr> : genres?.map((genre) => {
-                            return <tr className="hover:bg-gray-100" key={genre.genre_id}>
+                        </tr> : actors?.map((actor) => {
+                            return <tr className="hover:bg-gray-100" key={actor.actorId}>
                                 <th className="px-6 py-4">
                                     <span
-                                        className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600">{genre.genre_id}</span>
+                                        className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600">{actor.actorId}</span>
                                 </th>
                                 <td className="flex gap-3 px-6 py-4 font-normal text-gray-900">
                                     <div className="text-sm">
-                                        <div className="font-medium text-gray-700">{genre.name}</div>
+                                        <div className="font-medium text-gray-700">{actor.name}</div>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className="flex gap-5">
-                                        <button onClick={()=>handleOpenDelete(genre)}>
+                                    <div className="flex gap-4">
+                                        <button>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -128,7 +108,7 @@ const AdminGenre = () => {
                                                 />
                                             </svg>
                                         </button>
-                                        <button onClick={()=>handleOpenUpdate(genre)}>
+                                        <button>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -156,5 +136,5 @@ const AdminGenre = () => {
     </div>;
 };
 
-export default AdminGenre;
+export default AdminActor;
 

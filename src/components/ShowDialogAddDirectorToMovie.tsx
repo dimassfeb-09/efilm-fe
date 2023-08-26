@@ -4,6 +4,7 @@ import Select from "react-select";
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import showToast from "./toast.tsx";
+import {APIURL} from "../constant/constant.ts";
 
 
 type propsShowDialog = {
@@ -13,11 +14,6 @@ type propsShowDialog = {
     handleUpdateData: ()=> void;
 }
 
-interface Option {
-    key: number;
-    label: string;
-    value: string;
-}
 
 const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
 
@@ -26,11 +22,10 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
 
     const [loading, setLoading]= useState<boolean>(false);
 
-    const [optionsMovie, setOptionsMovie] = useState<Option[]>([]);
-    const [optionsDirector, setOptionsDirector] = useState<Option[]>([]);
+    const [optionsMovie, setOptionsMovie] = useState<OptionType[]>([]);
+    const [options, setOptions] = useState<OptionType[]>([]);
 
     const [cookie,] = useCookies(['access_token'])
-    const APIURL = import.meta.env.VITE_URL_API;
 
     useEffect(() => {
         const fetchDataMovies = async ()=> {
@@ -54,20 +49,11 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
             const directors: DirectorsType[] = props.directors?.map((director: DirectorsType) : DirectorsType=> {
                 return director;
             });
-            setOptionsDirector(directors.map((director)=> {
+            setOptions(directors.map((director)=> {
                 return {key: director.id!, label: director.name, value: director.name}
             }))
         }
     }, [props.directors]);
-
-    const handleSubmit = ()=> {
-        setLoading(true);
-        insertDataDirectorToMovie();
-        props.handleUpdateData();
-        setTimeout(()=> {
-            setLoading(false);
-        }, 1000);
-    }
 
     const insertDataDirectorToMovie = async ()=> {
         try {
@@ -82,6 +68,7 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
             const statusCode = res.data.code;
             if (statusCode >= 200 && statusCode < 400) {
                 props.handleClose();
+                props.handleUpdateData();
                 showToast(true, "Success added director to movie")
             }
         } catch (e) {
@@ -91,11 +78,16 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
         }
     }
 
-    const handleClose = ()=> {
-        setMovieSelected(0);
-        setDirectorSelected(0);
-        props.handleClose();
+
+    const handleSubmit = ()=> {
+        setLoading(true);
+        insertDataDirectorToMovie();
+        props.handleUpdateData();
+        setTimeout(()=> {
+            setLoading(false);
+        }, 1000);
     }
+
 
     return (
         <Dialog open={props.open} onClose={props.handleClose}>
@@ -108,7 +100,7 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
                 <Select
                     name="director"
                     placeholder="Director"
-                    options={optionsDirector}
+                    options={options}
                     className="basic-multi-select mt-5"
                     classNamePrefix="select"
                     isSearchable={true}
@@ -134,7 +126,7 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>CANCEL</Button>
+                <Button onClick={props.handleClose}>CANCEL</Button>
                 <Button onClick={handleSubmit} disabled={loading}>{!loading ? 'SUBMIT': 'LOADING...'}</Button>
             </DialogActions>
         </Dialog>

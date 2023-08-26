@@ -20,12 +20,6 @@ const Register = () => {
 
 
         try {
-            if (username == "") {
-                throw Error("Username cannot be empty");
-            } else if (password == "") {
-                throw Error("Password cannot be empty");
-            }
-
             const APIURL = import.meta.env.VITE_URL_API;
             const response = await axios.post(`${APIURL}/auth/register`, {
                 username: username,

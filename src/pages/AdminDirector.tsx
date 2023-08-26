@@ -2,8 +2,6 @@ import AdminNavBar from "./Admin.tsx";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import ShowDialogAddDirector from "../components/ShowDialogAddDirector.tsx";
-import {useCookies} from "react-cookie";
-import showToast from "../components/toast.tsx";
 import ShowDialogAddDirectorToMovie from "../components/ShowDialogAddDirectorToMovie.tsx";
 import ShowDialogDeleteDirector from "../components/ShowDialogDeleteDirector.tsx";
 import ShowDialogUpdateDirector from "../components/ShowDialogUpdateDirector.tsx";
@@ -18,11 +16,9 @@ const AdminDirector = () => {
     const [directors, setDirectors] = useState<DirectorsType[] | null>(null);
     const [director, setDirector] = useState<DirectorsType | null>(null);
 
-    const [cookie,] = useCookies(['access_token'])
-    const APIURL = import.meta.env.VITE_URL_API;
-
     const fetchDataDirectors = async () => {
         try {
+            const APIURL = import.meta.env.VITE_URL_API;
             const res = await axios.get(`${APIURL}/directors`);
             const statusCode = res.data.code;
             if (statusCode == 200) {
@@ -33,13 +29,14 @@ const AdminDirector = () => {
         }
     }
 
-    const handleUpdateDataDirectors = ()=> {
-        fetchDataDirectors();
-    }
-
     useEffect(() => {
         fetchDataDirectors();
     }, []);
+
+    const handleUpdateData = ()=> {
+        fetchDataDirectors();
+    }
+
 
     const handleOpenDialogDelete = (director: DirectorsType)=> {
         setOpenDeleteDirector(true);
@@ -51,98 +48,67 @@ const AdminDirector = () => {
         setDirector(director);
     }
 
-    const handleSubmitAddDirector = async () => {
-            try {
-                if (director?.nationality_id == undefined) {
-                    throw Error("National cannot be empty, please select");
-                }
-                const res = await axios.post(`${APIURL}/directors`, director, {
-                        headers: {
-                            'Authorization': `Bearer ${cookie.access_token}`
-                        }
-                    }
-                )
-                const statusCode = res.data.code;
-                if (statusCode >= 200 && statusCode < 400) {
-                    setDirectors(res.data.data)
-                    fetchDataDirectors();
-                    handleCloseAddDirector()
-                    showToast(true, "Success created directors")
-                }
-            } catch (e) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                showToast(false, String(e.response.data.message))
-            }
-        }
-
-    const handleCloseAddDirector = () => {
+    // handle closed
+    const handleClose = ()=> {
+        if (openAddDirector) {
             setOpenAddDirector(false);
-    }
-
-    const handleCloseAddDirectorToMovie = () => {
-        setOpenAddDirectorToMovie(false);
-    }
-    const handleCloseDeleteDirector = () => {
-        setOpenDeleteDirector(false);
-        setDirector(null);
-    }
-
-    const handleCloseUpdateDirector = () => {
-        setOpenUpdateDirector(false);
-        setDirector(null);
+        } else if (openUpdateDirector) {
+            setOpenUpdateDirector(false);
+        } else if (openDeleteDirector) {
+            setOpenDeleteDirector(false);
+        } else if (openAddDirectorToMovie) {
+            setOpenAddDirectorToMovie(false);
+        }
     }
 
         return <div className="w-full flex justify-center">
             <div className="w-full">
                 <AdminNavBar/>
                 <ShowDialogAddDirector
-                    director={director}
-                    handleClose={handleCloseAddDirector}
-                    handleSubmit={handleSubmitAddDirector}
+                    handleClose={handleClose}
+                    handleUpdateData={handleUpdateData}
                     open={openAddDirector}
-                    setDirector={setDirector}
                 />
                 <ShowDialogAddDirectorToMovie
                     directors={directors}
-                    handleClose={handleCloseAddDirectorToMovie}
-                    handleUpdateData={handleUpdateDataDirectors}
+                    handleClose={handleClose}
+                    handleUpdateData={handleUpdateData}
                     open={openAddDirectorToMovie}
                 />
                 <ShowDialogDeleteDirector
                     director={director}
-                    handleClose={handleCloseDeleteDirector}
-                    handleUpdateData={handleUpdateDataDirectors}
+                    handleClose={handleClose}
+                    handleUpdateData={handleUpdateData}
                     open={openDeleteDirector}
                  />
                 <ShowDialogUpdateDirector
                     director={director}
-                    handleClose={handleCloseUpdateDirector}
-                    handleUpdateData={handleUpdateDataDirectors}
+                    handleClose={handleClose}
+                    handleUpdateData={handleUpdateData}
                     open={openUpdateDirector}
                  />
                 <div className="flex">
                     <button
                         onClick={() => setOpenAddDirector(true)}
-                        className="flex items-center ml-5 my-3 justify-center w-1/2 px-5 py-2 text-sm
-                tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                        className="flex items-center ml-5 my-3 justify-center px-5 py-2 text-sm
+                tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                              stroke="currentColor" className="w-5 h-5">
                             <path strokeLinecap="round" strokeLinejoin="round"
                                   d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span>Add DIRECTOR</span>
+                        <span>Add Director</span>
                     </button>
                     <button
                         onClick={() => setOpenAddDirectorToMovie(true)}
-                        className="flex items-center mx-5 my-3 justify-center w-1/2 px-5 py-2 text-sm
-                tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                        className="flex items-center mx-5 my-3 justify-center px-5 py-2 text-sm
+                tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                              stroke="currentColor" className="w-5 h-5">
                             <path strokeLinecap="round" strokeLinejoin="round"
                                   d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span>Add DIRECTOR TO MOVIE</span>
+                        <span>Add Director To Movie</span>
                     </button>
                 </div>
                 <div className="rounded-lg border border-gray-200 shadow-md m-5 overflow-x-scroll">
@@ -151,7 +117,7 @@ const AdminDirector = () => {
                         <tr>
                             <th scope="col" className="px-6 py-4 font-medium text-gray-900">ID</th>
                             <th scope="col" className="px-6 py-4 font-medium text-gray-900">NAME</th>
-                            <th scope="col" className="px-6 py-4 font-medium text-gray-900"></th>
+                            <th scope="col" className="px-6 py-4 font-medium text-gray-900">ACTION</th>
                         </tr>
                         </thead>
                         <tbody
@@ -160,7 +126,7 @@ const AdminDirector = () => {
                             <tr>
                                 <td colSpan={5} className="px-6 py-4 whitespace-no-wrap text-center">Loading...</td>
                             </tr> : directors.map((director) => {
-                                return <tr className="hover:bg-gray-50" key={director.id}>
+                                return <tr className="hover:bg-gray-100" key={director.id}>
                                     <th className="px-6 py-4">
                                     <span
                                         className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600">{director.id}</span>
@@ -171,7 +137,7 @@ const AdminDirector = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="flex justify-end gap-4">
+                                        <div className="flex gap-4">
                                             <button onClick={()=>handleOpenDialogDelete(director)}>
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"

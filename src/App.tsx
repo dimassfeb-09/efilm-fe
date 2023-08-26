@@ -10,6 +10,7 @@ import AdminMovie from "./pages/AdminMovie.tsx";
 import Genres from "./pages/Genres.tsx";
 import AdminGenre from "./pages/AdminGenre.tsx";
 import AdminDirector from "./pages/AdminDirector.tsx";
+import AdminActor from "./pages/AdminActor.tsx";
 
 const App = () => {
     return (
@@ -26,6 +27,7 @@ const App = () => {
                 <Route path="/admin/movie" element={<AdminMovie/>}/>
                 <Route path="/admin/genre" element={<AdminGenre/>}/>
                 <Route path="/admin/director" element={<AdminDirector/>}/>
+                <Route path="/admin/actor" element={<AdminActor/>}/>
             </Routes>
         </>
     );

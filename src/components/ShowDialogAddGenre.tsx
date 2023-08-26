@@ -1,35 +1,54 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
+import {useState} from "react";
+import axios from "axios";
+import showToast from "./toast.tsx";
+import {useCookies} from "react-cookie";
+import {APIURL} from "../constant/constant.ts";
 
 
 type propsShowDialog = {
-    genre: GenresType | null;
-    setGenre: Dispatch<SetStateAction<GenresType | null>>;
     open: boolean;
     handleClose: () => void;
-    handleSubmit:  ()=> void;
+    handleUpdateData:  ()=> void;
 }
 
 const ShowDialogAddGenre = (props: propsShowDialog) => {
 
     const [name, setName] = useState<string | null>(null);
     const [loading, setLoading]= useState<boolean>(false);
+    const [cookie,] = useCookies(['access_token'])
 
+    const handleSubmitAdd = async () => {
+        try {
+            const res = await axios.post(`${APIURL}/genres`, {
+                    name: name
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${cookie.access_token}`
+                    }
+                }
+            )
+
+            const statusCode = res.data.code;
+            if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, 'Successfully add genres')
+                props.handleClose();
+                props.handleUpdateData()
+            }
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            showToast(false, String(e.response.data.message));
+        }
+    }
 
     const handleSubmit = ()=> {
         setLoading(true);
-        props.handleSubmit();
+        handleSubmitAdd();
         setTimeout(()=> {
             setLoading(false);
         }, 1000)
     }
-
-
-    useEffect(() => {
-        props.setGenre({
-            name: name ?? '',
-        })
-    }, [name]);
 
     return (
         <Dialog open={props.open} onClose={props.handleClose}>
@@ -46,7 +65,7 @@ const ShowDialogAddGenre = (props: propsShowDialog) => {
                     type="text"
                     fullWidth
                     variant="standard"
-                    value={props.genre?.name ?? ''}
+                    value={name ?? ''}
                     onChange={(e) => setName(e.target.value)}
                 />
             </DialogContent>

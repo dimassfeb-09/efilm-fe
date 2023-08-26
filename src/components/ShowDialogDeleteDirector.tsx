@@ -1,8 +1,9 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
-import { useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
+import {APIURL} from "../constant/constant.ts";
 
 type propsShowDialog = {
     director: DirectorsType | null;
@@ -13,24 +14,25 @@ type propsShowDialog = {
 
 const ShowDialogDeleteDirector = (props: propsShowDialog) => {
 
-    const [loading, setLoading]= useState<boolean>(false);
+    const [id, setID] = useState<number | null>(null);
+    const [name, setName] = useState<string | null>(null);
 
+    const [loading, setLoading]= useState<boolean>(false);
     const [cookie,] = useCookies(['access_token'])
 
-    const handleSubmitdeleteData = async () => {
+    const handleSubmitDeleteDirector = async () => {
         try {
-            const APIURL = import.meta.env.VITE_URL_API;
-            const res = await axios.delete(`${APIURL}/directors/${props.director?.id}`, {
+            const res = await axios.delete(`${APIURL}/directors/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${cookie.access_token}`
                     }
                 }
             )
-
             const statusCode = res.data.code;
             if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, 'Successfully delete director');
                 props.handleClose();
-                showToast(true, 'Successfully delete director')
+                props.handleUpdateData()
             }
 
         } catch (e) {
@@ -42,19 +44,25 @@ const ShowDialogDeleteDirector = (props: propsShowDialog) => {
 
     const handleSubmit = ()=> {
         setLoading(true);
-        handleSubmitdeleteData()
+        handleSubmitDeleteDirector()
         setTimeout(()=> {
             setLoading(false);
         }, 1000)
         props.handleUpdateData();
     }
 
+
+    useEffect(() => {
+        setID(props.director?.id ?? 0);
+        setName(props.director?.name ?? '');
+    }, [props.director]);
+
     return (
         <Dialog open={props.open} onClose={props.handleClose}>
-            <DialogTitle>Delete Data Genre {props.director?.name}</DialogTitle>
+            <DialogTitle>Delete Data Director <b>{name}</b></DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    This form is used to delete director data {props.director?.name}
+                    This form is used to delete director data <b>{name}</b>
                 </DialogContentText>
             </DialogContent>
             <DialogActions>

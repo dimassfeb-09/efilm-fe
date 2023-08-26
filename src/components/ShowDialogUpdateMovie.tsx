@@ -1,7 +1,7 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import axios from "axios";
-
+import {APIURL} from "../constant/constant.ts";
 import Select from "react-select";
 
 type propsShowDialog = {
@@ -12,11 +12,6 @@ type propsShowDialog = {
     handleSubmit: ()=> void;
 }
 
-interface Option {
-    key: number;
-    label: string;
-    value: string;
-}
 
 const ShowDialogUpdateMovie = (props: propsShowDialog) => {
 
@@ -29,17 +24,15 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
     const [language, setLanguage] = useState<string | null>(null);
     const [genreIds, setGenreIds] = useState<number[] | null>(null);
 
-    const [selected, setSelected] = useState<Option[]>([]);
-    const [options, setOptions] = useState<Option[]>([]);
+    const [selected, setSelected] = useState<OptionType[]>([]);
+    const [options, setOptions] = useState<OptionType[]>([]);
 
     const [loading, setLoading] = useState<boolean>(false);
-
-    const APIURL = import.meta.env.VITE_URL_API;
 
     const fetchDataGenres = async () => {
         await axios.get(`${APIURL}/genres`).then((res) => {
             const dataGenre = res.data.data;
-            const opts = dataGenre.map((genre: { id: number, name: string, value: string }): Option => {
+            const opts = dataGenre.map((genre: { id: number, name: string, value: string }): OptionType => {
                 return {key: genre.id, label: genre.name, value: genre.name}
             })
             setOptions(opts);

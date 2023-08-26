@@ -127,23 +127,23 @@ const AdminMovie = () => {
             <button
                 onClick={handleOpenAdd}
                 className="flex items-center mx-5 my-3 justify-center w-1/2 px-5 py-2 text-sm
-                tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                      stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round"
                           d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <span>Add Film</span>
+                <span>Add Movie</span>
             </button>
             <div className="rounded-lg border border-gray-200 shadow-md m-5 overflow-x-scroll">
                 <table className="w-full border-collapse bg-white text-left text-sm text-gray-500">
                     <thead className="bg-gray-50">
                     <tr>
-                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">Title</th>
-                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">Language</th>
-                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">Duration</th>
-                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">Genre</th>
-                        <th scope="col" className="px-6 py-4 font-medium text-gray-900"></th>
+                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">ID</th>
+                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">TITLE</th>
+                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">LANGUAGE</th>
+                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">DURATION/MS</th>
+                        <th scope="col" className="px-6 py-4 font-medium text-gray-900">ACTION</th>
                     </tr>
                     </thead>
                     <tbody
@@ -152,7 +152,11 @@ const AdminMovie = () => {
                         <tr>
                             <td colSpan={5} className="px-6 py-4 whitespace-no-wrap text-center">Loading...</td>
                         </tr> : movies?.map((movie) => {
-                            return <tr className="hover:bg-gray-50" key={movie.id}>
+                            return <tr className="hover:bg-gray-100" key={movie.id}>
+                                <th className="px-6 py-4">
+                                    <span
+                                        className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600">{movie.id}</span>
+                                </th>
                                 <th className="flex gap-3 px-6 py-4 font-normal text-gray-900">
                                     <div className="h-28 w-28">
                                         <img
@@ -168,8 +172,6 @@ const AdminMovie = () => {
                                             <div className="text-blue-500"><a href={movie.trailer_url}
                                                                               target="_blank">Trailer</a></div>
                                         </div>
-                                        <div
-                                            className="bg-secondaryColor text-white w-max px-2 rounded text-xs">ID {movie.id}</div>
                                     </div>
                                 </th>
                                 <td className="px-6 py-4">
@@ -178,15 +180,7 @@ const AdminMovie = () => {
                                 </td>
                                 <td className="px-6 py-4">{movie.duration} minutes</td>
                                 <td className="px-6 py-4">
-                                    <div className="flex gap-2">
-                                        {movie.genre_ids?.map((genre_id) => <span className="inline-flex items-center gap-1 rounded-full bg-blue-50
-                                                px-2 py-1 text-xs font-semibold text-blue-600" key={genre_id}>
-                                            {genre_id}
-                                        </span>)}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex justify-end gap-4">
+                                    <div className="flex gap-4">
                                         <button onClick={() => handleOpenDelete(movie)}>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"

@@ -1,35 +1,32 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
+import Select from "react-select";
 import axios from "axios";
 import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
-import {formattedDate} from "../helpers/formattedDate.ts";
-import Select from "react-select";
 import {APIURL} from "../constant/constant.ts";
 
 
 type propsShowDialog = {
-    director: DirectorsType | null;
     open: boolean;
     handleClose: () => void;
-    handleUpdateData:  ()=> void;
+    handleUpdateData: ()=> void;
 }
 
+const ShowDialogAddActor = (props: propsShowDialog) => {
 
-const ShowDialogUpdateDirector = (props: propsShowDialog) => {
-
-    const [id, setID] = useState<number | null>(null);
     const [name, setName] = useState<string | null>(null);
     const [dateOfBirth, setDateOfBirth] = useState<string | null>(null);
     const [nationalityID, setNationalityID] = useState<number | null>(null);
     const [loading, setLoading]= useState<boolean>(false);
-    const [options, setOptions] = useState<OptionType[]>([]);
 
+    const [options, setOptions] = useState<OptionType[]>([]);
     const [cookie,] = useCookies(['access_token'])
 
-    const updateDataDirector = async ()=> {
+
+    const handleAddActor = async ()=> {
         try {
-            const res = await axios.put(`${APIURL}/directors/${id}`, {
+            const res = await axios.post(`${APIURL}/actors`, {
                     name: name,
                     date_of_birth: dateOfBirth,
                     nationality_id: nationalityID,
@@ -41,9 +38,9 @@ const ShowDialogUpdateDirector = (props: propsShowDialog) => {
             )
             const statusCode = res.data.code;
             if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, 'success created actors');
                 props.handleClose();
                 props.handleUpdateData();
-                showToast(true, "Success update director.")
             }
         } catch (e) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -54,17 +51,14 @@ const ShowDialogUpdateDirector = (props: propsShowDialog) => {
 
     const handleSubmit = ()=> {
         setLoading(true);
-        updateDataDirector();
+        handleAddActor()
         setTimeout(()=> {
             setLoading(false);
-        }, 1000);
+        }, 1000)
     }
 
-
-    // getting data national
     useEffect(() => {
         const fetchDataNationality = async ()=> {
-            const APIURL = import.meta.env.VITE_URL_API;
             try {
                 const res = await axios.get(`${APIURL}/nationals`)
                 const nationals: National[] =res.data.data.map((national:National) : National=> {
@@ -80,26 +74,18 @@ const ShowDialogUpdateDirector = (props: propsShowDialog) => {
         fetchDataNationality()
     }, []);
 
-    useEffect(() => {
-        setID(props.director?.id ?? null);
-        setName(props.director?.name ?? null);
-        const formatDateOfBirth = formattedDate(props.director?.date_of_birth);
-        setDateOfBirth(formatDateOfBirth ?? null);
-        setNationalityID(props.director?.nationality_id ?? null);
-    }, [props.director]);
-
     return (
         <Dialog open={props.open} onClose={props.handleClose}>
-            <DialogTitle>Update Data Director <b>{props.director?.name}</b></DialogTitle>
+            <DialogTitle>Add Data Actor</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    This form is used to update director data <b>{props.director?.name}</b>
+                    This form is used to add actor data
                 </DialogContentText>
                 <TextField
                     autoFocus
                     margin="dense"
-                    id="name"
-                    label="Name"
+                    id="actor"
+                    label="Actor Name"
                     type="text"
                     fullWidth
                     variant="standard"
@@ -109,8 +95,8 @@ const ShowDialogUpdateDirector = (props: propsShowDialog) => {
                 <TextField
                     autoFocus
                     margin="dense"
-                    id="name"
-                    label="Name"
+                    id="date_of_birth"
+                    label="Date Of Birth (yyyy-mm-dd)"
                     type="text"
                     fullWidth
                     variant="standard"
@@ -118,14 +104,12 @@ const ShowDialogUpdateDirector = (props: propsShowDialog) => {
                     onChange={(e) => setDateOfBirth(e.target.value)}
                 />
 
-
                 <Select
                     name="national"
                     placeholder="National"
                     options={options}
                     className="basic-multi-select mt-5 mb-56"
                     classNamePrefix="select"
-                    value={options.filter((opts)=> opts.key==nationalityID)}
                     isSearchable={true}
                     onChange={(select) => {
                         if (select != null) {
@@ -142,4 +126,4 @@ const ShowDialogUpdateDirector = (props: propsShowDialog) => {
     );
 };
 
-export default ShowDialogUpdateDirector;
+export default ShowDialogAddActor;

@@ -2,7 +2,7 @@ import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogT
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
-
+import {APIURL} from "../constant/constant.ts";
 import showToast from "./toast.tsx";
 import Select from "react-select";
 
@@ -15,11 +15,7 @@ type propsShowDialog = {
 }
 
 
-interface Option {
-    key: number;
-    label: string;
-    value: string;
-}
+
 
 const ShowDialogAddMovie = (props: propsShowDialog) => {
 
@@ -32,10 +28,9 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
     const [language, setLanguage] = useState<string | null>(null);
     const [genreIds, setGenreIds] = useState<number[] | null>(null);
 
-    const [options, setOptions] = useState<Option[]>([]);
+    const [options, setOptions] = useState<OptionType[]>([]);
     const [cookie,] = useCookies(['access_token'])
 
-    const APIURL = import.meta.env.VITE_URL_API;
 
     const handleSubmit = async () => {
         try {
@@ -60,7 +55,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
             const statusCode = res.data.code;
             if (statusCode >= 200 && statusCode < 400) {
                 showToast(true, 'Successfully add movies')
-                handleClose();
+                props.handleClose();
                 props.handleUpdateData();
             }
 
@@ -72,15 +67,10 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
         }
     }
 
-    const handleClose = () => {
-        props.handleClose();
-        props.setMovie(null);
-    }
-
     const fetchDataGenres = async () => {
         await axios.get(`${APIURL}/genres`).then((res) => {
             const dataGenre = res.data.data;
-            const opts = dataGenre.map((genre: { id: number, name: string, value: string }): Option => {
+            const opts = dataGenre.map((genre: { id: number, name: string, value: string }): OptionType => {
                 return {key: genre.id, label: genre.name, value: genre.name}
             })
             setOptions(opts);
@@ -105,7 +95,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
     }, [title, releaseDate, duration, plot, posterUrl, trailerUrl, language, genreIds]);
 
     return (
-        <Dialog open={props.open} onClose={handleClose}>
+        <Dialog open={props.open} onClose={props.handleClose}>
             <DialogTitle>Add Data Movie</DialogTitle>
             <DialogContent>
                 <DialogContentText>
@@ -206,7 +196,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>CANCEL</Button>
+                <Button onClick={props.handleClose}>CANCEL</Button>
                 <Button onClick={handleSubmit}>SUBMIT</Button>
             </DialogActions>
         </Dialog>

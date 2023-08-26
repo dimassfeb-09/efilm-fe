@@ -2,6 +2,7 @@ import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogT
 import axios from "axios";
 import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
+import {APIURL} from "../constant/constant.ts";
 
 type propsShowDialog = {
     movieId?: number;
@@ -15,7 +16,6 @@ const ShowDialogDeleteMovie = (props: propsShowDialog) => {
 
     const handleSubmit = async () => {
         try {
-            const APIURL = import.meta.env.VITE_URL_API;
             await axios.delete(`${APIURL}/movies/${props.movieId}`, {
                     headers: {
                         'Authorization': `Bearer ${cookie.access_token}`

@@ -1,22 +1,18 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
+import { useEffect, useState} from "react";
 import Select from "react-select";
 import axios from "axios";
+import showToast from "./toast.tsx";
+import {useCookies} from "react-cookie";
+import {APIURL} from "../constant/constant.ts";
 
 
 type propsShowDialog = {
-    director: DirectorsType | null;
-    setDirector: Dispatch<SetStateAction<DirectorsType | null>>;
     open: boolean;
     handleClose: () => void;
-    handleSubmit:  ()=> void;
+    handleUpdateData:  ()=> void;
 }
 
-interface Option {
-    key: number;
-    label: string;
-    value: string;
-}
 
 const ShowDialogAddDirector = (props: propsShowDialog) => {
 
@@ -25,32 +21,47 @@ const ShowDialogAddDirector = (props: propsShowDialog) => {
     const [nationalityID, setNationalityID] = useState<number | null>(null);
     const [loading, setLoading]= useState<boolean>(false);
 
-    const [options, setOptions] = useState<Option[]>([]);
+    const [options, setOptions] = useState<OptionType[]>([]);
+    const [cookie,] = useCookies(['access_token'])
 
+    // post data to api
+    const handleAddDirector = async () => {
+        try {
+            const res = await axios.post(`${APIURL}/directors`, {
+                    name: name,
+                    date_of_birth: dateOfBirth,
+                    nationality_id: nationalityID,
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${cookie.access_token}`
+                    }
+                }
+            )
+            const statusCode = res.data.code;
+            if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, "Success created directors");
+                props.handleClose();
+                props.handleUpdateData();
+            }
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            showToast(false, String(e.response.data.message))
+        }
+    }
+
+
+
+    // handleSubmit for loading state and handleAddDirector
     const handleSubmit = ()=> {
         setLoading(true);
-        props.handleSubmit();
+        handleAddDirector();
         setTimeout(()=> {
             setLoading(false);
         }, 1000)
     }
 
-    const handleClose = ()=> {
-        props.setDirector(null);
-        setName(null);
-        setDateOfBirth(null);
-        setNationalityID(null);
-        props.handleClose();
-    }
-
-    useEffect(() => {
-        props.setDirector({
-            date_of_birth: dateOfBirth ?? '',
-            name: name ?? '',
-            nationality_id: nationalityID ?? 0,
-        })
-    }, [name, dateOfBirth, nationalityID]);
-
+    // fetch national data
     useEffect(() => {
         const fetchDataNationality = async ()=> {
             const APIURL = import.meta.env.VITE_URL_API;
@@ -84,7 +95,7 @@ const ShowDialogAddDirector = (props: propsShowDialog) => {
                     type="text"
                     fullWidth
                     variant="standard"
-                    value={props.director?.name ?? ''}
+                    value={name ?? ''}
                     onChange={(e) => setName(e.target.value)}
                 />
                 <TextField
@@ -95,7 +106,7 @@ const ShowDialogAddDirector = (props: propsShowDialog) => {
                     type="text"
                     fullWidth
                     variant="standard"
-                    value={props.director?.date_of_birth ?? ''}
+                    value={dateOfBirth ?? ''}
                     onChange={(e) => setDateOfBirth(e.target.value)}
                 />
 
@@ -114,7 +125,7 @@ const ShowDialogAddDirector = (props: propsShowDialog) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>CANCEL</Button>
+                <Button onClick={props.handleClose}>CANCEL</Button>
                 <Button onClick={handleSubmit} disabled={loading}>{!loading ? 'SUBMIT': 'LOADING...'}</Button>
             </DialogActions>
         </Dialog>
