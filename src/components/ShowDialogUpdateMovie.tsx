@@ -1,23 +1,24 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {APIURL} from "../constant/constant.ts";
 import Select from "react-select";
+import showToast from "./toast.tsx";
+import {useCookies} from "react-cookie";
 
 type propsShowDialog = {
     movie: MoviesType | null;
-    setMovie: Dispatch<SetStateAction<MoviesType | null>>;
     open: boolean;
     handleClose: () => void;
-    handleSubmit: ()=> void;
+    handleUpdateData: ()=> void;
 }
-
 
 const ShowDialogUpdateMovie = (props: propsShowDialog) => {
 
+    const [id, setID] = useState<number | null>(null);
     const [title, setTitle] = useState<string | null>(null);
     const [releaseDate, setReleaseDate] = useState<string | null>(null);
-    const [duration, setDuration] = useState<string | null>(null);
+    const [duration, setDuration] = useState<number | null>(null);
     const [plot, setPlot] = useState<string | null>(null);
     const [posterUrl, setPosterUrl] = useState<string | null>(null);
     const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
@@ -27,6 +28,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
     const [selected, setSelected] = useState<OptionType[]>([]);
     const [options, setOptions] = useState<OptionType[]>([]);
 
+    const [cookie,] = useCookies(['access_token'])
     const [loading, setLoading] = useState<boolean>(false);
 
     const fetchDataGenres = async () => {
@@ -39,9 +41,43 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
         });
     };
 
+    const handleSubmitUpdate = async () => {
+        try {
+            const data = {
+                title: title,
+                release_date: releaseDate,
+                duration: duration,
+                plot: plot,
+                poster_url: posterUrl,
+                trailer_url: trailerUrl,
+                language: language,
+                genre_ids: genreIds,
+            };
+
+            const res = await axios.put(`${APIURL}/movies/${id}`, data, {
+                    headers: {
+                        'Authorization': `Bearer ${cookie.access_token}`
+                    }
+                }
+            )
+
+            const statusCode = res.data.code;
+            if (statusCode >= 200 && statusCode < 400) {
+                showToast(true, 'Successfully update movies')
+                props.handleClose();
+                props.handleUpdateData();
+            }
+
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            showToast(false, String(e.response.data.message));
+        }
+    }
+
     const handleSubmit = ()=> {
         setLoading(true);
-        props.handleSubmit()
+        handleSubmitUpdate()
         setTimeout(()=> {
             setLoading(false);
         }, 1000)
@@ -52,27 +88,26 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
     }, []);
 
     useEffect(() => {
-        props.setMovie({
-            id: props.movie?.id ?? 0,
-            title: title ?? props.movie?.title ?? '',
-            release_date: releaseDate ?? props.movie?.release_date ?? '',
-            duration: duration ?? props.movie?.duration ?? '',
-            plot: plot ?? props.movie?.plot ?? '',
-            poster_url: posterUrl ?? props.movie?.poster_url ?? '',
-            trailer_url: trailerUrl ?? props.movie?.trailer_url ?? '',
-            language: language ?? props.movie?.language ?? '',
-            genre_ids: genreIds ?? props.movie?.genre_ids ?? null,
-        })
-    }, [title, releaseDate, duration, plot, posterUrl, language, genreIds, trailerUrl]);
+        const movie = props.movie;
+        setID(movie?.id ?? 0)
+        setTitle(movie?.title ?? '')
+        setReleaseDate(movie?.release_date ?? '0000-00-00')
+        setDuration(Number(movie?.duration) ?? 0)
+        setPlot(movie?.plot ?? '')
+        setPosterUrl(movie?.poster_url ?? '')
+        setTrailerUrl(movie?.trailer_url ?? '')
+        setLanguage(movie?.language ?? '')
+        setGenreIds(movie?.genre_ids ?? null);
+    }, [props.movie]);
 
     useEffect(() => {
-        const filteredOptions = options.filter(option => props.movie?.genre_ids?.includes(option.key));
+        const filteredOptions = options.filter(option => genreIds?.includes(option.key));
         setSelected(filteredOptions)
-    }, [genreIds,props.movie?.genre_ids]);
+    }, [props.movie, genreIds, options]);
 
     return (
         <Dialog open={props.open} onClose={props.handleClose}>
-            <DialogTitle>Add Data Movie</DialogTitle>
+            <DialogTitle>Update Data Movie <b>{props.movie?.title}</b></DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     This form is used to add movie data
@@ -85,7 +120,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     type="text"
                     fullWidth
                     variant="standard"
-                    value={props.movie?.title ?? ''}
+                    value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
                 <TextField
@@ -96,7 +131,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     type="text"
                     fullWidth
                     variant="standard"
-                    value={props.movie?.release_date ?? ''}
+                    value={releaseDate}
                     onChange={(e) => setReleaseDate(e.target.value)}
                 />
                 <TextField
@@ -104,11 +139,11 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     margin="dense"
                     id="duration"
                     label="Duration (in minutes)"
-                    type="text"
+                    type="number"
                     fullWidth
                     variant="standard"
-                    value={props.movie?.duration ?? 0}
-                    onChange={(e) => setDuration(e.target.value)}
+                    value={duration}
+                    onChange={(e) => setDuration(Number(e.target.value))}
                 />
                 <TextField
                     id="plot"
@@ -119,7 +154,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     type="text"
                     rows={5}
                     variant="standard"
-                    value={props.movie?.plot ?? ''}
+                    value={plot}
                     onChange={(e) => setPlot(e.target.value)}
                     fullWidth
                 />
@@ -131,7 +166,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     placeholder="https://asianwiki.com/images/e/ec/Moving-MP1.jpeg"
                     type="text"
                     fullWidth
-                    value={props.movie?.poster_url ?? ''}
+                    value={posterUrl}
                     variant="standard"
                     onChange={(e) => setPosterUrl(e.target.value)}
                 />
@@ -143,7 +178,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     placeholder="https://www.youtube.com/watch?v=UVYw3biOgyE&ab_channel=Hulu"
                     type="text"
                     fullWidth
-                    value={props.movie?.trailer_url ?? ''}
+                    value={trailerUrl}
                     variant="standard"
                     onChange={(e) => setTrailerUrl(e.target.value)}
                 />
@@ -155,7 +190,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     placeholder="Korean"
                     type="text"
                     fullWidth
-                    value={props.movie?.language ?? ''}
+                    value={language}
                     variant="standard"
                     onChange={(e) => setLanguage(e.target.value)}
                 />
@@ -167,7 +202,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     className="basic-multi-select mt-5 mb-52"
                     classNamePrefix="select"
                     hideSelectedOptions={true}
-                    onChange={(select) => setGenreIds(select.map((value) => value.key))}
+                    onChange={(select) => setGenreIds(select.map(select=>select.key))}
                 />
             </DialogContent>
             <DialogActions>

@@ -4,8 +4,7 @@ import {useEffect, useState} from "react";
 import ShowDialogUpdateMovie from "../components/ShowDialogUpdateMovie.tsx";
 import ShowDialogAddMovie from "../components/ShowDialogAddMovie.tsx";
 import ShowDialogDeleteMovie from "../components/ShowDialogDeleteMovie.tsx";
-import showToast from "../components/toast.tsx";
-import {useCookies} from "react-cookie";
+import {APIURL} from "../constant/constant.ts";
 
 const AdminMovie = () => {
 
@@ -16,9 +15,6 @@ const AdminMovie = () => {
     const [openUpdate, setOpenUpdate] = useState<boolean>(false);
     const [openDelete, setOpenDelete] = useState<boolean>(false);
 
-    const [cookie,] = useCookies(['access_token'])
-    const APIURL = import.meta.env.VITE_URL_API;
-
     const fetchDataMovies = async () => {
         try {
             const response = await axios.get(`${APIURL}/movies`)
@@ -27,40 +23,6 @@ const AdminMovie = () => {
             setMovies(sortedMovies);
         } catch (e) {
             console.log(e)
-        }
-    }
-
-    const handleSubmitUpdate = async () => {
-        try {
-            const data = {
-                title: movie?.title,
-                release_date: movie?.release_date,
-                duration: Number(movie?.duration),
-                plot: movie?.plot,
-                poster_url: movie?.poster_url,
-                trailer_url: movie?.trailer_url,
-                language: movie?.language,
-                genre_ids: movie?.genre_ids,
-            };
-
-            const res = await axios.put(`${APIURL}/movies/${movie?.id}`, data, {
-                    headers: {
-                        'Authorization': `Bearer ${cookie.access_token}`
-                    }
-                }
-            )
-
-            const statusCode = res.data.code;
-            if (statusCode >= 200 && statusCode < 400) {
-                showToast(true, 'Successfully update movies')
-                handleCloseUpdate();
-                fetchDataMovies();
-            }
-
-        } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            showToast(false, String(e.response.data.message));
         }
     }
 
@@ -78,22 +40,6 @@ const AdminMovie = () => {
         setOpenDelete(true);
     }
 
-    const handleCloseAdd = () => {
-        setOpenAdd(false);
-        setMovie(null);
-    }
-
-    const handleCloseUpdate = () => {
-        setOpenUpdate(false);
-        setMovie(null);
-    }
-
-
-    const handleCloseDelete = () => {
-        setOpenDelete(false);
-        setMovie(null);
-    }
-
     const handleUpdateData = ()=> {
         fetchDataMovies();
     }
@@ -102,28 +48,37 @@ const AdminMovie = () => {
         fetchDataMovies();
     }, [])
 
+    const handleClose = ()=> {
+        if (openAdd) {
+            setOpenAdd(false);
+        } else if (openUpdate) {
+            setOpenUpdate(false);
+        } else if (openDelete) {
+            setOpenDelete(false);
+        }
+    }
+
 
     return <div className="w-full flex justify-center">
         <div className="w-full bg-white">
             <AdminNavBar/>
             <ShowDialogAddMovie
                 open={openAdd}
-                handleClose={handleCloseAdd}
+                handleClose={handleClose}
                 movie={movie}
                 setMovie={setMovie}
                 handleUpdateData={handleUpdateData}
             />
             <ShowDialogUpdateMovie
                 open={openUpdate}
-                handleClose={handleCloseUpdate}
+                handleClose={handleClose}
                 movie={movie}
-                setMovie={setMovie}
-                handleSubmit={handleSubmitUpdate}
+                handleUpdateData={handleUpdateData}
             />
             <ShowDialogDeleteMovie
                 open={openDelete}
-                handleClose={handleCloseDelete}
-                movieId={movie?.id}/>
+                handleClose={handleClose}
+                movie={movie}/>
             <button
                 onClick={handleOpenAdd}
                 className="flex items-center mx-5 my-3 justify-center w-1/2 px-5 py-2 text-sm

@@ -3,20 +3,23 @@ import axios from "axios";
 import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
 import {APIURL} from "../constant/constant.ts";
+import {useEffect, useState} from "react";
 
 type propsShowDialog = {
-    movieId?: number;
+    movie: MoviesType | null;
     open: boolean;
     handleClose: () => void;
 }
 
 const ShowDialogDeleteMovie = (props: propsShowDialog) => {
 
+    const [id, setID] = useState<number | null>(null);
+    const [title, setTitle] = useState<string | null>(null);
     const [cookie,] = useCookies(['access_token'])
 
     const handleSubmit = async () => {
         try {
-            await axios.delete(`${APIURL}/movies/${props.movieId}`, {
+            await axios.delete(`${APIURL}/movies/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${cookie.access_token}`
                     }
@@ -32,6 +35,11 @@ const ShowDialogDeleteMovie = (props: propsShowDialog) => {
         }
     }
 
+    useEffect(() => {
+        setID(props.movie?.id ?? 0);
+        setTitle(props.movie?.title ?? null);
+    }, [props.movie]);
+
     return (
         <Dialog
             open={props.open}
@@ -40,7 +48,7 @@ const ShowDialogDeleteMovie = (props: propsShowDialog) => {
             aria-describedby="alert-dialog-description"
         >
             <DialogTitle id="alert-dialog-title">
-                Delete Movie {props.movieId}
+                Delete Movie <b>{title}</b>
             </DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">

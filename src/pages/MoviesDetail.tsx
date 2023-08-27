@@ -128,7 +128,7 @@ const MovieDetail = () => {
                     </div>
                     <div className="px-5 mt-5">
                         <div className="text-xl font-bold">Actors</div>
-                        <div className="text-justify mt-2">{actors?.map(actor => <div>{actor.name}</div>) ?? '-'}</div>
+                        <div className="text-justify mt-2">{actors?.map(actor => <div>{actor.name} | <b>{actor.role}</b></div>) ?? '-'}</div>
                     </div>
                 </div>
             </div>

@@ -2,14 +2,15 @@ import AdminNavBar from "./Admin.tsx";
 import axios from "axios";
 import {useEffect, useState} from "react";
 import ShowDialogAddActor from "../components/ShowDialogAddActor.tsx";
+import ShowDialogAddActorToMovie from "../components/ShowDialogAddActorToMovie.tsx";
 
 const AdminActor = () => {
 
     const [actors, setActors] = useState<ActorsType[] | null>(null);
     const [openAddActor, setOpenAddActor] = useState<boolean>(false);
+    const [openAddActorToMovie, setOpenAddActorToMovie] = useState<boolean>(false);
 
     const APIURL = import.meta.env.VITE_URL_API;
-
 
     const fetchDataActors = async () => {
         try {
@@ -36,13 +37,25 @@ const AdminActor = () => {
     const handleClose = ()=> {
         if (openAddActor) {
             setOpenAddActor(false);
+        } else if (openAddActorToMovie) {
+            setOpenAddActorToMovie(false);
         }
     }
 
     return <div className="w-full flex justify-center">
         <div className="w-full bg-white">
             <AdminNavBar/>
-            <ShowDialogAddActor open={openAddActor} handleClose={handleClose} handleUpdateData={handleUpdateData}/>
+            <ShowDialogAddActor
+                open={openAddActor}
+                handleClose={handleClose}
+                handleUpdateData={handleUpdateData}
+            />
+            <ShowDialogAddActorToMovie
+                open={openAddActorToMovie}
+                handleClose={handleClose}
+                handleUpdateData={handleUpdateData}
+                actors={actors}
+            />
             <div className="flex">
                 <button onClick={()=>setOpenAddActor(true)}
                     className="flex items-center mx-5 my-3 justify-center px-5 py-2 text-sm
@@ -54,7 +67,7 @@ const AdminActor = () => {
                     </svg>
                     <span>Add Actor</span>
                 </button>
-                <button
+                <button onClick={()=>setOpenAddActorToMovie(true)}
                     className="flex items-center my-3 justify-center px-5 py-2 text-sm
                 tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"

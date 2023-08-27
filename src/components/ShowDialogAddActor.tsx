@@ -39,7 +39,7 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
             const statusCode = res.data.code;
             if (statusCode >= 200 && statusCode < 400) {
                 showToast(true, 'success created actors');
-                props.handleClose();
+                handleClose();
                 props.handleUpdateData();
             }
         } catch (e) {
@@ -55,6 +55,13 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
         setTimeout(()=> {
             setLoading(false);
         }, 1000)
+    }
+
+    const handleClose = ()=> {
+        setName(null);
+        setDateOfBirth(null);
+        setNationalityID(null);
+        props.handleClose();
     }
 
     useEffect(() => {
@@ -75,7 +82,7 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
     }, []);
 
     return (
-        <Dialog open={props.open} onClose={props.handleClose}>
+        <Dialog open={props.open} onClose={handleClose}>
             <DialogTitle>Add Data Actor</DialogTitle>
             <DialogContent>
                 <DialogContentText>
@@ -119,7 +126,7 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={props.handleClose}>CANCEL</Button>
+                <Button onClick={handleClose}>CANCEL</Button>
                 <Button onClick={handleSubmit} disabled={loading}>{!loading ? 'SUBMIT': 'LOADING...'}</Button>
             </DialogActions>
         </Dialog>
