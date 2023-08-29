@@ -6,7 +6,7 @@ type MoviesType = {
     duration: string;
     language: string;
     plot: string;
-    poster_url: string;
+    poster_url?: string;
     release_date: string;
     genre_ids?: number[] | null;
     created_at?: string;

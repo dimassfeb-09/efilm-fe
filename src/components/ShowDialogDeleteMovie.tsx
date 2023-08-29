@@ -9,6 +9,7 @@ type propsShowDialog = {
     movie: MoviesType | null;
     open: boolean;
     handleClose: () => void;
+    handleUpdateData: () => void;
 }
 
 const ShowDialogDeleteMovie = (props: propsShowDialog) => {
@@ -27,7 +28,7 @@ const ShowDialogDeleteMovie = (props: propsShowDialog) => {
             )
             showToast(true, 'Successfully delete movies')
             props.handleClose();
-            window.location.reload();
+            props.handleUpdateData();
         } catch (e) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore

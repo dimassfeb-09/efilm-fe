@@ -4,6 +4,7 @@ import axios from "axios";
 import {PlayArrowOutlined} from "@mui/icons-material";
 import {Dialog, DialogContent, DialogTitle} from "@mui/material";
 import ReactPlayer from "react-player";
+import {FIREBASE_PATH} from "../constant/constant.ts";
 
 const MovieDetail = () => {
 
@@ -72,12 +73,12 @@ const MovieDetail = () => {
         <div>
             <div
                 className="absolute w-full h-1/2 z-0 flex justify-center bg-primaryColor bg-opacity-40 blur-3xl">
-                <img src={movie?.poster_url} alt={movie?.title} className="h-full sm:w-1/4 opacity-70 "
+                <img src={FIREBASE_PATH + movie?.poster_url + "?alt=media"} alt={movie?.title} className="h-full sm:w-1/4 opacity-70 "
                      draggable={false}/>
             </div>
             <div className="flex flex-col items-center pb-10 z-50">
                 <div className="flex flex-col items-center justify-center mt-5 z-40">
-                    <img src={movie?.poster_url} alt={movie?.title} className="h-80 w-52 rounded-md z-50"
+                    <img src={FIREBASE_PATH + movie?.poster_url + "?alt=media"} alt={movie?.title} className="h-80 w-52 rounded-md z-50"
                          draggable={false}/>
                     <div className="flex gap-1">
                         {genres?.map(genre => <Link className="mt-2" to={`/genres/${genre.genre_id}`}>

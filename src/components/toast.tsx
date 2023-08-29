@@ -5,7 +5,7 @@ const showToast = (isSuccess: boolean, msg: string) => {
         toast.success(msg, {
             position: "top-right",
             autoClose: 5000,
-            className: "top-24 mx-3",
+            className: "top-24 mx-3 z-50",
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
@@ -17,7 +17,7 @@ const showToast = (isSuccess: boolean, msg: string) => {
         toast.error(msg, {
             position: "top-right",
             autoClose: 5000,
-            className: "top-24 mx-3",
+            className: "top-24 mx-3 z-50",
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,

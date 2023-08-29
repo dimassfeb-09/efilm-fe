@@ -5,6 +5,8 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import {Autoplay, Navigation, Pagination} from "swiper/modules";
 import {Link} from "react-router-dom";
+import {FIREBASE_PATH} from "../constant/constant.ts";
+import CardMovie from "../components/CardMovie.tsx";
 
 export default function Home() {
 
@@ -33,7 +35,7 @@ export default function Home() {
                         className="mySwiper h-44"
                         modules={[Autoplay, Pagination, Navigation]}
                         spaceBetween={30}
-                        slidesPerView={3}
+                        slidesPerView={2}
                         centeredSlides={false}
                         autoplay={{
                             delay: 3000,
@@ -57,7 +59,7 @@ export default function Home() {
                                         ({movie.release_date.split("-")[0]})
                                     </div>
                                     <img
-                                        src={movie.poster_url}
+                                        src={FIREBASE_PATH + movie.poster_url + '?alt=media'}
                                         alt={movie.title}
                                         className="object-cover h-48 w-full"/>
                                 </Link>
@@ -72,19 +74,9 @@ export default function Home() {
                         <div className="flex flex-nowrap px-5 overflow-x-scroll hidden-overflow w-full">
                             {trending?.map(movie => {
                                 if (movie.language == "Korean") {
-                                    return <Link to={`/movies/${movie.id}`}>
-                                        <div className="inline-block mr-5">
-                                            <img
-                                                className="w-44 h-64 max-w-xs overflow-hidden rounded-lg shadow-md
-                                        bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out
-                                        mb-2"
-                                                src={movie.poster_url}
-                                                alt={movie.title}
-                                            />
-                                            <div className="w-44 overflow-auto font-semibold">{movie.title}</div>
-                                            <div>{movie.release_date.split("-")[0]}</div>
-                                        </div>
-                                    </Link>;
+                                    return <CardMovie
+                                        movie={movie}
+                                    />;
                                 }
                             })}
                         </div>
@@ -97,19 +89,9 @@ export default function Home() {
                         <div className="flex flex-nowrap px-5 overflow-x-scroll hidden-overflow w-full">
                             {trending?.map(movie => {
                                 if (movie.language == "English") {
-                                    return <Link to={`/movies/${movie.id}`}>
-                                        <div className="inline-block mr-5">
-                                            <img
-                                                className="w-44 h-64 max-w-xs overflow-hidden rounded-lg shadow-md
-                                        bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out
-                                        mb-2"
-                                                src={movie.poster_url}
-                                                alt={movie.title}
-                                            />
-                                            <div className="w-44 overflow-auto font-semibold">{movie.title}</div>
-                                            <div>{movie.release_date.split("-")[0]}</div>
-                                        </div>
-                                    </Link>;
+                                    return <CardMovie
+                                        movie={movie}
+                                    />;
                                 }
                             })}
                         </div>
@@ -122,19 +104,9 @@ export default function Home() {
                         <div className="flex flex-nowrap px-5 overflow-x-scroll hidden-overflow w-full">
                             {trending?.map(movie => {
                                 if (movie.language == "Thai") {
-                                    return <Link to={`/movies/${movie.id}`}>
-                                        <div className="inline-block mr-5">
-                                            <img
-                                                className="w-44 h-64 max-w-xs overflow-hidden rounded-lg shadow-md
-                                        bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out
-                                        mb-2"
-                                                src={movie.poster_url}
-                                                alt={movie.title}
-                                            />
-                                            <div className="w-44 overflow-auto font-semibold">{movie.title}</div>
-                                            <div>{movie.release_date.split("-")[0]}</div>
-                                        </div>
-                                    </Link>;
+                                    return <CardMovie
+                                        movie={movie}
+                                    />;
                                 }
                             })}
                         </div>

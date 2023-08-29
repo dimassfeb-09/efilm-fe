@@ -1,5 +1,5 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
-import {useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import axios from "axios";
 import {APIURL} from "../constant/constant.ts";
 import Select from "react-select";
@@ -24,12 +24,36 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
     const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
     const [language, setLanguage] = useState<string | null>(null);
     const [genreIds, setGenreIds] = useState<number[] | null>(null);
+    const [posterFileSelected, setPosterFileSelected] = useState<File | null>(null);
 
     const [selected, setSelected] = useState<OptionType[]>([]);
     const [options, setOptions] = useState<OptionType[]>([]);
 
     const [cookie,] = useCookies(['access_token'])
     const [loading, setLoading] = useState<boolean>(false);
+
+    const validateInput = () : boolean => {
+        if (title == null) {
+            showToast(false, "Please attach poster photo");
+            return false
+        } else if (releaseDate == null) {
+            showToast(false, "Release date can't be empty");
+            return false
+        } else if (duration == null) {
+            showToast(false, "Duration can't be empty");
+            return false
+        } else if (plot == null) {
+            showToast(false, "Plot can't be empty");
+            return false
+        } else if (trailerUrl == null) {
+            showToast(false, "Trailer URL can't be empty");
+            return false
+        } else if (language == null) {
+            showToast(false, "Language can't be empty");
+            return false
+        }
+        return true;
+    }
 
     const fetchDataGenres = async () => {
         await axios.get(`${APIURL}/genres`).then((res) => {
@@ -61,12 +85,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                 }
             )
 
-            const statusCode = res.data.code;
-            if (statusCode >= 200 && statusCode < 400) {
-                showToast(true, 'Successfully update movies')
-                props.handleClose();
-                props.handleUpdateData();
-            }
+            return res.data;
 
         } catch (e) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -75,12 +94,64 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
         }
     }
 
-    const handleSubmit = ()=> {
-        setLoading(true);
-        handleSubmitUpdate()
-        setTimeout(()=> {
+    const handleUploadPoster = async (movieID: number)=> {
+        try {
+            return await axios.post(`${APIURL}/movies/${movieID}/upload_poster`, {
+                poster_file: posterFileSelected
+            }, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    'Authorization': `Bearer ${cookie.access_token}`,
+                }
+            });
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            showToast(false,e.response.data.message);
+        }
+    }
+
+    const handleSubmit = async ()=> {
+        const isValid = validateInput()
+        if (!isValid) {
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const res = await handleSubmitUpdate();
+            if (res.code == 200 && id != null && posterFileSelected != null) {
+                await handleUploadPoster(id);
+            }
+
+            props.handleUpdateData();
+            handleClose();
+            showToast(true, "Success updated movie");
             setLoading(false);
-        }, 1000)
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            showToast(false,e.response.data.message);
+        }
+    }
+
+    const handleSelectFile = (e: ChangeEvent<HTMLInputElement>)=> {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+            setPosterFileSelected(file);
+        }
+    }
+
+    const handleClose = ()=> {
+        props.handleClose();
+        setTitle(null);
+        setReleaseDate(null);
+        setDuration(null);
+        setPlot(null);
+        setTrailerUrl(null);
+        setLanguage(null);
+        setGenreIds(null);
+        setPosterFileSelected(null);
     }
 
     useEffect(() => {
@@ -88,16 +159,15 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
     }, []);
 
     useEffect(() => {
-        const movie = props.movie;
-        setID(movie?.id ?? 0)
-        setTitle(movie?.title ?? '')
-        setReleaseDate(movie?.release_date ?? '0000-00-00')
-        setDuration(Number(movie?.duration) ?? 0)
-        setPlot(movie?.plot ?? '')
-        setPosterUrl(movie?.poster_url ?? '')
-        setTrailerUrl(movie?.trailer_url ?? '')
-        setLanguage(movie?.language ?? '')
-        setGenreIds(movie?.genre_ids ?? null);
+        setID(props.movie?.id ?? 0)
+        setTitle(props.movie?.title ?? '')
+        setReleaseDate(props.movie?.release_date ?? '0000-00-00')
+        setDuration(Number(props.movie?.duration ?? '0') ?? 0)
+        setPlot(props.movie?.plot ?? '')
+        setPosterUrl(props.movie?.poster_url ?? '')
+        setTrailerUrl(props.movie?.trailer_url ?? '')
+        setLanguage(props.movie?.language ?? '')
+        setGenreIds(props.movie?.genre_ids ?? null);
     }, [props.movie]);
 
     useEffect(() => {
@@ -112,6 +182,20 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                 <DialogContentText>
                     This form is used to add movie data
                 </DialogContentText>
+
+                <div className="mt-5">
+                    <span className="text-xs">Choose poster photo <span className="text-xs text-red-500">(choose new photos if need update)</span></span>
+                    <label className="block mt-2">
+                        <input
+                            type="file"
+                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600"
+                            accept="image/png, image/jpg, image/jpeg"
+                            onChange={handleSelectFile}
+                        />
+                        <span className="text-xs">Only accept .png .jpg .jpeg</span>
+                    </label>
+                </div>
+
                 <TextField
                     autoFocus
                     margin="dense"
@@ -131,7 +215,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     type="text"
                     fullWidth
                     variant="standard"
-                    value={releaseDate}
+                    value={releaseDate ?? ''}
                     onChange={(e) => setReleaseDate(e.target.value)}
                 />
                 <TextField
@@ -157,18 +241,6 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     value={plot}
                     onChange={(e) => setPlot(e.target.value)}
                     fullWidth
-                />
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="poster_url"
-                    label="Poster URL (Address with extention .png .jpg .jpeg)"
-                    placeholder="https://asianwiki.com/images/e/ec/Moving-MP1.jpeg"
-                    type="text"
-                    fullWidth
-                    value={posterUrl}
-                    variant="standard"
-                    onChange={(e) => setPosterUrl(e.target.value)}
                 />
                 <TextField
                     autoFocus

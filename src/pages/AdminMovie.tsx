@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import ShowDialogUpdateMovie from "../components/ShowDialogUpdateMovie.tsx";
 import ShowDialogAddMovie from "../components/ShowDialogAddMovie.tsx";
 import ShowDialogDeleteMovie from "../components/ShowDialogDeleteMovie.tsx";
-import {APIURL} from "../constant/constant.ts";
+import {APIURL, FIREBASE_PATH} from "../constant/constant.ts";
 
 const AdminMovie = () => {
 
@@ -53,6 +53,7 @@ const AdminMovie = () => {
             setOpenAdd(false);
         } else if (openUpdate) {
             setOpenUpdate(false);
+            setMovie(null);
         } else if (openDelete) {
             setOpenDelete(false);
         }
@@ -65,8 +66,6 @@ const AdminMovie = () => {
             <ShowDialogAddMovie
                 open={openAdd}
                 handleClose={handleClose}
-                movie={movie}
-                setMovie={setMovie}
                 handleUpdateData={handleUpdateData}
             />
             <ShowDialogUpdateMovie
@@ -78,7 +77,9 @@ const AdminMovie = () => {
             <ShowDialogDeleteMovie
                 open={openDelete}
                 handleClose={handleClose}
-                movie={movie}/>
+                movie={movie}
+                handleUpdateData={handleUpdateData}
+            />
             <button
                 onClick={handleOpenAdd}
                 className="flex items-center mx-5 my-3 justify-center w-1/2 px-5 py-2 text-sm
@@ -116,7 +117,7 @@ const AdminMovie = () => {
                                     <div className="h-28 w-28">
                                         <img
                                             className="h-full w-full rounded-full object-cover object-center"
-                                            src={movie.poster_url}
+                                            src={FIREBASE_PATH + movie.poster_url + '?alt=media'}
                                             alt=""
                                         />
                                     </div>
@@ -124,8 +125,10 @@ const AdminMovie = () => {
                                         <div>
                                             <div
                                                 className="font-medium text-gray-700 w-max">{movie.title}</div>
-                                            <div className="text-blue-500"><a href={movie.trailer_url}
-                                                                              target="_blank">Trailer</a></div>
+                                            <div className="text-blue-500">
+                                                <a href={movie.trailer_url}
+                                                   target="_blank">Trailer</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </th>
