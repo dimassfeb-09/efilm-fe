@@ -1,6 +1,6 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import {ChangeEvent,useEffect, useState} from "react";
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import {APIURL} from "../constant/constant.ts";
