@@ -114,7 +114,7 @@ const ShowDialogAddActorToMovie = (props: propsShowDialog) => {
                         variant="outlined"
                         required={true}
                         size="small"
-                        value={role}
+                        value={role ?? ''}
                         onChange={(e)=>setRole(e.target.value)}
                         fullWidth
                     />

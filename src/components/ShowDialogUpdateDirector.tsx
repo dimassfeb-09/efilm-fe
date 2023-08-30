@@ -6,6 +6,8 @@ import {useCookies} from "react-cookie";
 import {formattedDate} from "../helpers/formattedDate.ts";
 import Select from "react-select";
 import {APIURL} from "../constant/constant.ts";
+import {DatePicker} from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 
 type propsShowDialog = {
@@ -106,17 +108,20 @@ const ShowDialogUpdateDirector = (props: propsShowDialog) => {
                     value={name ?? ''}
                     onChange={(e) => setName(e.target.value)}
                 />
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label="Name"
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                    value={dateOfBirth ?? ''}
-                    onChange={(e) => setDateOfBirth(e.target.value)}
-                />
+                
+                <div className="mt-5 mb-3">
+                    <DatePicker
+                        label="Date Of Birth"
+                        className="w-full"
+                        value={dayjs(dateOfBirth ?? Date())}
+                        format="YYYY-MM-DD"
+                        onChange={(e)=> {
+                            if (e != null) {
+                                setDateOfBirth(e.format('YYYY-MM-DD'))
+                            }
+                        }}
+                    />
+                </div>
 
 
                 <Select

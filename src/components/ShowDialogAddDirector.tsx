@@ -5,6 +5,8 @@ import axios from "axios";
 import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
 import {APIURL} from "../constant/constant.ts";
+import {DatePicker} from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 
 type propsShowDialog = {
@@ -98,17 +100,20 @@ const ShowDialogAddDirector = (props: propsShowDialog) => {
                     value={name ?? ''}
                     onChange={(e) => setName(e.target.value)}
                 />
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="date_of_birth"
-                    label="Date Of Birth (yyyy-mm-dd)"
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                    value={dateOfBirth ?? ''}
-                    onChange={(e) => setDateOfBirth(e.target.value)}
-                />
+
+                <div className="mt-5 mb-3">
+                    <DatePicker
+                        label="Date Of Birth"
+                        className="w-full"
+                        value={dayjs(dateOfBirth ?? Date())}
+                        format="YYYY-MM-DD"
+                        onChange={(e)=> {
+                            if (e != null) {
+                                setDateOfBirth(e.format('YYYY-MM-DD'))
+                            }
+                        }}
+                    />
+                </div>
 
                 <Select
                     name="national"

@@ -5,6 +5,8 @@ import {APIURL} from "../constant/constant.ts";
 import Select from "react-select";
 import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
+import {DatePicker} from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 type propsShowDialog = {
     movie: MoviesType | null;
@@ -207,17 +209,19 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="release_date"
-                    label="Release Date (yyyy-mm-dd)"
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                    value={releaseDate ?? ''}
-                    onChange={(e) => setReleaseDate(e.target.value)}
-                />
+                <div className="mt-5 mb-3">
+                    <DatePicker
+                        label="Release Date"
+                        className="w-full"
+                        value={dayjs(releaseDate ?? Date())}
+                        format="YYYY-MM-DD"
+                        onChange={(e)=> {
+                            if (e != null) {
+                                setReleaseDate(e.format('YYYY-MM-DD'))
+                            }
+                        }}
+                    />
+                </div>
                 <TextField
                     autoFocus
                     margin="dense"

@@ -11,24 +11,28 @@ import Genres from "./pages/Genres.tsx";
 import AdminGenre from "./pages/AdminGenre.tsx";
 import AdminDirector from "./pages/AdminDirector.tsx";
 import AdminActor from "./pages/AdminActor.tsx";
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
 const App = () => {
     return (
         <>
-            <NavBar/>
-            <Routes>
-                <Route path="/" element={<Home/>}/>
-                <Route path="/movies/:id" element={<MovieDetail/>}/>
-                <Route path="/genres/:id" element={<Genres/>}/>
-                <Route path="/actors" element={<Actors/>}/>
-                <Route path="/login" element={<Login/>}/>
-                <Route path="/register" element={<Register/>}/>
-                <Route path="/admin/home" element={<Admin/>}/>
-                <Route path="/admin/movie" element={<AdminMovie/>}/>
-                <Route path="/admin/genre" element={<AdminGenre/>}/>
-                <Route path="/admin/director" element={<AdminDirector/>}/>
-                <Route path="/admin/actor" element={<AdminActor/>}/>
-            </Routes>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <NavBar/>
+                <Routes>
+                    <Route path="/" element={<Home/>}/>
+                    <Route path="/movies/:id" element={<MovieDetail/>}/>
+                    <Route path="/genres/:id" element={<Genres/>}/>
+                    <Route path="/actors" element={<Actors/>}/>
+                    <Route path="/login" element={<Login/>}/>
+                    <Route path="/register" element={<Register/>}/>
+                    <Route path="/admin/home" element={<Admin/>}/>
+                    <Route path="/admin/movie" element={<AdminMovie/>}/>
+                    <Route path="/admin/genre" element={<AdminGenre/>}/>
+                    <Route path="/admin/director" element={<AdminDirector/>}/>
+                    <Route path="/admin/actor" element={<AdminActor/>}/>
+                </Routes>
+            </LocalizationProvider>
         </>
     );
 };

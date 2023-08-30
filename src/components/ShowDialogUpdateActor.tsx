@@ -1,34 +1,37 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
-import Select from "react-select";
 import axios from "axios";
 import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
+import {formattedDate} from "../helpers/formattedDate.ts";
+import Select from "react-select";
 import {APIURL} from "../constant/constant.ts";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
 
 type propsShowDialog = {
+    actor: ActorsType | null;
     open: boolean;
     handleClose: () => void;
-    handleUpdateData: ()=> void;
+    handleUpdateData:  ()=> void;
 }
 
-const ShowDialogAddActor = (props: propsShowDialog) => {
 
+const ShowDialogUpdateActor = (props: propsShowDialog) => {
+
+    const [id, setID] = useState<number | null>(null);
     const [name, setName] = useState<string | null>(null);
     const [dateOfBirth, setDateOfBirth] = useState<string | null>(null);
     const [nationalityID, setNationalityID] = useState<number | null>(null);
     const [loading, setLoading]= useState<boolean>(false);
-
     const [options, setOptions] = useState<OptionType[]>([]);
+
     const [cookie,] = useCookies(['access_token'])
 
-
-    const handleAddActor = async ()=> {
+    const updateDataActor = async ()=> {
         try {
-            const res = await axios.post(`${APIURL}/actors`, {
+            const res = await axios.put(`${APIURL}/actors/${id}`, {
                     name: name,
                     date_of_birth: dateOfBirth,
                     nationality_id: nationalityID,
@@ -40,9 +43,9 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
             )
             const statusCode = res.data.code;
             if (statusCode >= 200 && statusCode < 400) {
-                showToast(true, 'success created actors');
-                handleClose();
+                props.handleClose();
                 props.handleUpdateData();
+                showToast(true, "Success update actor.")
             }
         } catch (e) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -53,21 +56,17 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
 
     const handleSubmit = ()=> {
         setLoading(true);
-        handleAddActor()
+        updateDataActor();
         setTimeout(()=> {
             setLoading(false);
-        }, 1000)
+        }, 1000);
     }
 
-    const handleClose = ()=> {
-        setName(null);
-        setDateOfBirth(null);
-        setNationalityID(null);
-        props.handleClose();
-    }
 
+    // getting data national
     useEffect(() => {
         const fetchDataNationality = async ()=> {
+            const APIURL = import.meta.env.VITE_URL_API;
             try {
                 const res = await axios.get(`${APIURL}/nationals`)
                 const nationals: National[] =res.data.data.map((national:National) : National=> {
@@ -83,18 +82,26 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
         fetchDataNationality()
     }, []);
 
+    useEffect(() => {
+        setID(props.actor?.actorId ?? null);
+        setName(props.actor?.name ?? null);
+        const formatDateOfBirth = formattedDate(props.actor?.date_of_birth);
+        setDateOfBirth(formatDateOfBirth ?? null);
+        setNationalityID(props.actor?.nationality_id ?? null);
+    }, [props.actor]);
+
     return (
-        <Dialog open={props.open} onClose={handleClose}>
-            <DialogTitle>Add Data Actor</DialogTitle>
+        <Dialog open={props.open} onClose={props.handleClose}>
+            <DialogTitle>Update Data Actor <b>{props.actor?.name}</b></DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    This form is used to add actor data
+                    This form is used to update actor data <b>{props.actor?.name}</b>
                 </DialogContentText>
                 <TextField
                     autoFocus
                     margin="dense"
-                    id="actor"
-                    label="Actor Name"
+                    id="name"
+                    label="Name"
                     type="text"
                     fullWidth
                     variant="standard"
@@ -116,12 +123,14 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
                     />
                 </div>
 
+
                 <Select
                     name="national"
                     placeholder="National"
                     options={options}
                     className="basic-multi-select mt-5 mb-56"
                     classNamePrefix="select"
+                    value={options.filter((opts)=> opts.key==nationalityID)}
                     isSearchable={true}
                     onChange={(select) => {
                         if (select != null) {
@@ -131,11 +140,11 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>CANCEL</Button>
+                <Button onClick={props.handleClose}>CANCEL</Button>
                 <Button onClick={handleSubmit} disabled={loading}>{!loading ? 'SUBMIT': 'LOADING...'}</Button>
             </DialogActions>
         </Dialog>
     );
 };
 
-export default ShowDialogAddActor;
+export default ShowDialogUpdateActor;

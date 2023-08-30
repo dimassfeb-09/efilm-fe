@@ -1,10 +1,12 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import {ChangeEvent,useEffect, useState} from "react";
+import dayjs, { Dayjs } from 'dayjs';
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import {APIURL} from "../constant/constant.ts";
 import Select from "react-select";
 import showToast from "./toast.tsx";
+import {DatePicker} from "@mui/x-date-pickers";
 
 type propsShowDialog = {
     open: boolean;
@@ -182,17 +184,19 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
                     value={title ?? ''}
                     onChange={(e) => setTitle(e.target.value)}
                 />
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="release_date"
-                    label="Release Date (yyyy-mm-dd)"
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                    value={releaseDate ?? ''}
-                    onChange={(e) => setReleaseDate(e.target.value)}
-                />
+                <div className="mt-5 mb-3">
+                    <DatePicker
+                        label="Release Date"
+                        className="w-full"
+                        value={dayjs(releaseDate ?? Date())}
+                        format="YYYY-MM-DD"
+                        onChange={(e)=> {
+                            if (e != null) {
+                                setReleaseDate(e.format('YYYY-MM-DD'))
+                            }
+                        }}
+                    />
+                </div>
                 <TextField
                     autoFocus
                     margin="dense"

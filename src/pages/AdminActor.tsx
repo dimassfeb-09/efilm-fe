@@ -3,11 +3,17 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import ShowDialogAddActor from "../components/ShowDialogAddActor.tsx";
 import ShowDialogAddActorToMovie from "../components/ShowDialogAddActorToMovie.tsx";
+import ShowDialogDeleteActor from "../components/ShowDialogDeleteActor.tsx";
+import ShowDialogUpdateActor from "../components/ShowDialogUpdateActor.tsx";
 
 const AdminActor = () => {
 
     const [actors, setActors] = useState<ActorsType[] | null>(null);
+    const [actor, setActor] = useState<ActorsType | null>(null);
+
     const [openAddActor, setOpenAddActor] = useState<boolean>(false);
+    const [openUpdateActor, setOpenUpdateActor] = useState<boolean>(false);
+    const [openDeleteActor, setOpenDeleteActor] = useState<boolean>(false);
     const [openAddActorToMovie, setOpenAddActorToMovie] = useState<boolean>(false);
 
     const APIURL = import.meta.env.VITE_URL_API;
@@ -34,11 +40,25 @@ const AdminActor = () => {
         fetchDataActors();
     }
 
+    const handleOpenDelete = (actor: ActorsType) => {
+        setOpenDeleteActor(true);
+        setActor(actor)
+    }
+
+    const handleOpenUpdate = (actor: ActorsType) => {
+        setOpenUpdateActor(true);
+        setActor(actor)
+    }
+
     const handleClose = ()=> {
         if (openAddActor) {
             setOpenAddActor(false);
         } else if (openAddActorToMovie) {
             setOpenAddActorToMovie(false);
+        } else if (openDeleteActor) {
+            setOpenDeleteActor(false);
+        } else if (openUpdateActor) {
+            setOpenUpdateActor(false);
         }
     }
 
@@ -49,6 +69,18 @@ const AdminActor = () => {
                 open={openAddActor}
                 handleClose={handleClose}
                 handleUpdateData={handleUpdateData}
+            />
+            <ShowDialogDeleteActor
+                open={openDeleteActor}
+                handleClose={handleClose}
+                handleUpdateData={handleUpdateData}
+                actor={actor}
+            />
+            <ShowDialogUpdateActor
+                open={openUpdateActor}
+                handleClose={handleClose}
+                handleUpdateData={handleUpdateData}
+                actor={actor}
             />
             <ShowDialogAddActorToMovie
                 open={openAddActorToMovie}
@@ -105,7 +137,7 @@ const AdminActor = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex gap-4">
-                                        <button>
+                                        <button onClick={()=> handleOpenDelete(actor)}>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -121,7 +153,7 @@ const AdminActor = () => {
                                                 />
                                             </svg>
                                         </button>
-                                        <button>
+                                        <button onClick={()=> handleOpenUpdate(actor)}>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"

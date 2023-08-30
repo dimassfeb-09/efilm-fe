@@ -1,8 +1,9 @@
 import axios from "axios";
-import {Link, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import "swiper/css";
 import "swiper/css/pagination";
+import CardMovie from "../components/CardMovie.tsx";
 
 const Genres = () => {
 
@@ -45,21 +46,9 @@ const Genres = () => {
                         {movies?.map((movie) => {
                             if (movie) {
                                 return (
-                                    <Link to={`/movies/${movie.id}`} key={movie.id}>
-                                        <div className="inline-block mr-5">
-                                            <img
-                                                className="w-44 h-64 max-w-xs overflow-hidden rounded-lg shadow-md
-                                        bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out
-                                        mb-2"
-                                                src={movie.poster_url}
-                                                alt={movie.title}
-                                            />
-                                            <div className="w-44 overflow-auto font-semibold">
-                                                {movie.title}
-                                            </div>
-                                            <div>{movie.release_date.split("-")[0]}</div>
-                                        </div>
-                                    </Link>
+                                    <CardMovie
+                                        movie={movie}
+                                    />
                                 );
                             }
                             return <div>Data not found</div>;
