@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Menu} from "@mui/icons-material";
 import {Link} from "react-router-dom";
 import {useCookies} from "react-cookie";
@@ -9,7 +9,7 @@ import {useAuth} from "../context/AuthContext.tsx";
 export default function NavBar() {
 
     const [menuHidden, setMenuHidden] = useState<boolean>(true);
-    const [cookie, , removeCookie] = useCookies(['access_token'])
+    const [, , removeCookie] = useCookies(['access_token'])
 
     const useAuths = useAuth();
 
