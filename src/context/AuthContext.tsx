@@ -23,10 +23,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const logout = async () => {
-        const isVerify = await VerifyJWT();
-        if (isVerify) {
-            setIsAuthenticated(false);
-        }
+        setIsAuthenticated(false);
     };
 
 

@@ -51,7 +51,7 @@ export default function Home() {
                         navigation={true}
                     >
                         {trending?.map((movie) => {
-                            return <SwiperSlide>
+                            return <SwiperSlide key={movie.id}>
                                 <Link to={`/movies/${movie.id}`}>
                                     <div className="absolute p-5  text-white">
                             <span

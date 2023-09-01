@@ -19,7 +19,6 @@ const App = () => {
 
     const useAuths = useAuth();
     useAuths.login();
-
     return (
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -29,8 +28,8 @@ const App = () => {
                     <Route path="/movies/:id" element={<MovieDetail/>}/>
                     <Route path="/genres/:id" element={<Genres/>}/>
                     <Route path="/actors" element={<Actors/>}/>
-                    <Route path="/login" element={<Login/>}/>
                     <Route path="/register" element={<Register/>}/>
+                    <Route path={"/login"} element={<PrivateRoute isAuthenticated={!useAuths.isAuthenticated} redirectTo={"/admin/movie"}><Login/></PrivateRoute>}/>
                     <Route path={"/admin/genre"} element={<PrivateRoute isAuthenticated={useAuths.isAuthenticated} redirectTo={"/login"}><AdminGenre/></PrivateRoute>}/>
                     <Route path={"/admin/director"} element={<PrivateRoute isAuthenticated={useAuths.isAuthenticated} redirectTo={"/login"}><AdminDirector/></PrivateRoute>}/>
                     <Route path={"/admin/actor"} element={<PrivateRoute isAuthenticated={useAuths.isAuthenticated} redirectTo={"/login"}><AdminActor/></PrivateRoute>}/>

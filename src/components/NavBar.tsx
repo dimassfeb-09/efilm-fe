@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Menu} from "@mui/icons-material";
 import {Link} from "react-router-dom";
 import {useCookies} from "react-cookie";
@@ -9,7 +9,6 @@ import {useAuth} from "../context/AuthContext.tsx";
 export default function NavBar() {
 
     const [menuHidden, setMenuHidden] = useState<boolean>(true);
-
     const [cookie, , removeCookie] = useCookies(['access_token'])
 
     const useAuths = useAuth();
@@ -41,14 +40,14 @@ export default function NavBar() {
                         <li className="mt-5 bg-secondaryColor px-2 rounded"><a
                             href="https://efilm-restfulapi.dimasfebriyant1.repl.co/"
                             target="_blank">API Documentation</a></li>
-                        {cookie.access_token == undefined ?
+                        {useAuths.isAuthenticated ?
                             <>
-                                <li className="mt-5"><Link to={'/login'}>Login</Link></li>
-                                <li className="mt-5"><Link to={'/register'}>Register</Link></li>
-                            </>
-                            : <>
                                 <li className="mt-5"><Link to={'/admin/movie'}>Admin</Link></li>
                                 <li className="mt-5" onClick={handleLogout}><Link to={'/'}>Logout</Link></li>
+                            </>
+                            : <>
+                                <li className="mt-5"><Link to={'/login'}>Login</Link></li>
+                                <li className="mt-5"><Link to={'/register'}>Register</Link></li>
                             </>}
                     </ul>
                 </div>
