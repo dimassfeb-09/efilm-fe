@@ -1,11 +1,10 @@
-import {Route, Routes} from "react-router-dom";
+import { Route, Routes} from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import Actors from "./pages/Actors.tsx";
 import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx";
 import NavBar from "./components/NavBar.tsx";
 import MovieDetail from "./pages/MoviesDetail.tsx";
-import Admin from "./pages/Admin.tsx";
 import AdminMovie from "./pages/AdminMovie.tsx";
 import Genres from "./pages/Genres.tsx";
 import AdminGenre from "./pages/AdminGenre.tsx";
@@ -13,8 +12,14 @@ import AdminDirector from "./pages/AdminDirector.tsx";
 import AdminActor from "./pages/AdminActor.tsx";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useAuth} from "./context/AuthContext.tsx";
+import PrivateRoute from "./context/PrivateRoute.tsx";
 
 const App = () => {
+
+    const useAuths = useAuth();
+    useAuths.login();
+
     return (
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -26,11 +31,10 @@ const App = () => {
                     <Route path="/actors" element={<Actors/>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/register" element={<Register/>}/>
-                    <Route path="/admin/home" element={<Admin/>}/>
-                    <Route path="/admin/movie" element={<AdminMovie/>}/>
-                    <Route path="/admin/genre" element={<AdminGenre/>}/>
-                    <Route path="/admin/director" element={<AdminDirector/>}/>
-                    <Route path="/admin/actor" element={<AdminActor/>}/>
+                    <Route path={"/admin/genre"} element={<PrivateRoute isAuthenticated={useAuths.isAuthenticated} redirectTo={"/login"}><AdminGenre/></PrivateRoute>}/>
+                    <Route path={"/admin/director"} element={<PrivateRoute isAuthenticated={useAuths.isAuthenticated} redirectTo={"/login"}><AdminDirector/></PrivateRoute>}/>
+                    <Route path={"/admin/actor"} element={<PrivateRoute isAuthenticated={useAuths.isAuthenticated} redirectTo={"/login"}><AdminActor/></PrivateRoute>}/>
+                    <Route path={"/admin/movie"} element={<PrivateRoute isAuthenticated={useAuths.isAuthenticated} redirectTo={"/login"}><AdminMovie/></PrivateRoute>}/>
                 </Routes>
             </LocalizationProvider>
         </>

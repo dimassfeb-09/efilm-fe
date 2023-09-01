@@ -5,7 +5,6 @@ type cardMovieProps = {
 }
 
 const CardMovie = (props: cardMovieProps) => {
-    console.log(props.movie.poster_url)
     return (
         <Link to={`/movies/${props.movie.id}`}>
             <div className="inline-block mr-5">

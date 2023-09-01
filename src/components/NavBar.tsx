@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import {useCookies} from "react-cookie";
 import showToast from "./toast.tsx";
 import {ToastContainer} from "react-toastify";
+import {useAuth} from "../context/AuthContext.tsx";
 
 export default function NavBar() {
 
@@ -11,9 +12,12 @@ export default function NavBar() {
 
     const [cookie, , removeCookie] = useCookies(['access_token'])
 
+    const useAuths = useAuth();
+
     const handleLogout = () => {
         removeCookie('access_token', {path: '/'})
         showToast(true, "Successfully logout");
+        useAuths.logout();
     }
 
     return (
@@ -43,7 +47,7 @@ export default function NavBar() {
                                 <li className="mt-5"><Link to={'/register'}>Register</Link></li>
                             </>
                             : <>
-                                <li className="mt-5"><Link to={'/admin/home'}>Admin</Link></li>
+                                <li className="mt-5"><Link to={'/admin/movie'}>Admin</Link></li>
                                 <li className="mt-5" onClick={handleLogout}><Link to={'/'}>Logout</Link></li>
                             </>}
                     </ul>
