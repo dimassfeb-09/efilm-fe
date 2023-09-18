@@ -11,7 +11,6 @@ FilterList,
 
 const Genres = () => {
 
-    const [genre, setGenre] = useState<GenresType | null>(null);
     const [genres, setGenres] = useState<GenresType[] | null>(null);
     const [movies, setMovies] = useState<MoviesType[] | null>(null);
     const [selectedFilter, setSelectedFilter] = useState<number>(0);
