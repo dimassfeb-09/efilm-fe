@@ -26,9 +26,12 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
     const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
     const [language, setLanguage] = useState<string | null>(null);
     const [genreIds, setGenreIds] = useState<number[] | null>(null);
+    const [national, setNational] = useState<number>(0);
     const [posterFileSelected, setPosterFileSelected] = useState<File | null>(null);
 
     const [selected, setSelected] = useState<OptionType[]>([]);
+
+    const [optionsNational, setOptionsNational] = useState<OptionType[]>([]);
     const [options, setOptions] = useState<OptionType[]>([]);
 
     const [cookie,] = useCookies(['access_token'])
@@ -53,6 +56,9 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
         } else if (language == null) {
             showToast(false, "Language can't be empty");
             return false
+        }  else if (national == null) {
+            showToast(false, "National can't be empty");
+            return false
         }
         return true;
     }
@@ -67,6 +73,16 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
         });
     };
 
+    const fetchDataNationals = async () => {
+        await axios.get(`${APIURL}/nationals`).then((res) => {
+            const dataNational = res.data.data;
+            const opts = dataNational.map((genre: { id: number, name: string, value: string }): OptionType => {
+                return {key: genre.id, label: genre.name, value: genre.name}
+            })
+            setOptionsNational(opts);
+        });
+    };
+
     const handleSubmitUpdate = async () => {
         try {
             const data = {
@@ -78,6 +94,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                 trailer_url: trailerUrl,
                 language: language,
                 genre_ids: genreIds,
+                national_id: national,
             };
 
             const res = await axios.put(`${APIURL}/movies/${id}`, data, {
@@ -127,13 +144,15 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
             }
 
             props.handleUpdateData();
-            handleClose();
             showToast(true, "Success updated movie");
+            handleClose();
             setLoading(false);
         } catch (e) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             showToast(false,e.response.data.message);
+            handleClose();
+            setLoading(false);
         }
     }
 
@@ -153,24 +172,28 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
         setTrailerUrl(null);
         setLanguage(null);
         setGenreIds(null);
+        setNational(0);
         setPosterFileSelected(null);
     }
 
     useEffect(() => {
         fetchDataGenres();
+        fetchDataNationals();
     }, []);
 
     useEffect(() => {
-        setID(props.movie?.id ?? 0)
-        setTitle(props.movie?.title ?? '')
-        setReleaseDate(props.movie?.release_date ?? '0000-00-00')
-        setDuration(Number(props.movie?.duration ?? '0') ?? 0)
-        setPlot(props.movie?.plot ?? '')
-        setPosterUrl(props.movie?.poster_url ?? '')
-        setTrailerUrl(props.movie?.trailer_url ?? '')
-        setLanguage(props.movie?.language ?? '')
+        setID(props.movie?.id ?? 0);
+        setTitle(props.movie?.title ?? '');
+        setReleaseDate(props.movie?.release_date ?? '0000-00-00');
+        setDuration(Number(props.movie?.duration ?? '0') ?? 0);
+        setPlot(props.movie?.plot ?? '');
+        setPosterUrl(props.movie?.poster_url ?? '');
+        setTrailerUrl(props.movie?.trailer_url ?? '');
+        setLanguage(props.movie?.language ?? '');
         setGenreIds(props.movie?.genre_ids ?? null);
+        setNational(props.movie?.national_id ?? 0);
     }, [props.movie]);
+
 
     useEffect(() => {
         const filteredOptions = options.filter(option => genreIds?.includes(option.key));
@@ -270,6 +293,20 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     variant="standard"
                     onChange={(e) => setLanguage(e.target.value)}
                 />
+                <Select
+                    name="national"
+                    value={optionsNational.filter((v)=>v.key == national) ?? 0}
+                    options={optionsNational}
+                    className="basic-multi-select mt-5"
+                    classNamePrefix="select"
+                    placeholder="National"
+                    onChange={(select) => {
+                        if (select != null) {
+                            setNational(select.key);
+                        }
+                    }}
+                />
+
                 <Select
                     isMulti
                     name="colors"

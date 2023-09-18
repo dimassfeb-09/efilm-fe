@@ -6,7 +6,7 @@ import Register from "./pages/Register.tsx";
 import NavBar from "./components/NavBar.tsx";
 import MovieDetail from "./pages/MoviesDetail.tsx";
 import AdminMovie from "./pages/AdminMovie.tsx";
-import Genres from "./pages/Genres.tsx";
+import GenresByID from "./pages/GenresByID.tsx";
 import AdminGenre from "./pages/AdminGenre.tsx";
 import AdminDirector from "./pages/AdminDirector.tsx";
 import AdminActor from "./pages/AdminActor.tsx";
@@ -14,6 +14,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {useAuth} from "./context/AuthContext.tsx";
 import PrivateRoute from "./context/PrivateRoute.tsx";
+import Genres from "./pages/Genres.tsx";
 
 const App = () => {
 
@@ -26,7 +27,8 @@ const App = () => {
                 <Routes>
                     <Route path="/" element={<Home/>}/>
                     <Route path="/movies/:id" element={<MovieDetail/>}/>
-                    <Route path="/genres/:id" element={<Genres/>}/>
+                    <Route path="/genres/:id" element={<GenresByID/>}/>
+                    <Route path="/genres" element={<Genres/>}/>
                     <Route path="/actors" element={<Actors/>}/>
                     <Route path="/register" element={<Register/>}/>
                     <Route path={"/login"} element={<PrivateRoute isAuthenticated={!useAuths.isAuthenticated} redirectTo={"/admin/movie"}><Login/></PrivateRoute>}/>

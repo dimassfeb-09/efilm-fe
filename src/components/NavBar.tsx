@@ -37,6 +37,7 @@ export default function NavBar() {
                 translate-y-14 sm:translate-x-0 sm:-translate-y-2.5 flex flex-col sm:static sm:flex sm:h-min sm:flex-row  sm:w-min`}>
                     <ul className="px-5 pt-2 sm:pt-0 sm:flex sm:gap-5 w-max">
                         <li className="pt-5"><Link to={'/'}>Home</Link></li>
+                        <li className="pt-5"><Link to={'/genres'}>Genres</Link></li>
                         <li className="mt-5 bg-secondaryColor px-2 rounded"><a
                             href="https://efilm-restfulapi.dimasfebriyant1.repl.co/"
                             target="_blank">API Documentation</a></li>

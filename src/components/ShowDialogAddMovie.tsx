@@ -22,10 +22,12 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
     const [plot, setPlot] = useState<string | null>(null);
     const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
     const [language, setLanguage] = useState<string | null>(null);
+    const [national, setNational] = useState<number | null>(null);
     const [genreIds, setGenreIds] = useState<number[] | null>(null);
     const [posterFileSelected, setPosterFileSelected] = useState<File | null>(null);
 
-    const [options, setOptions] = useState<OptionType[]>([]);
+    const [optionsNational, setOptionsNational] = useState<OptionType[]>([]);
+    const [optionsGenre, setOptionsGenre] = useState<OptionType[]>([]);
     const [cookie,] = useCookies(['access_token'])
 
 
@@ -48,6 +50,9 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
         } else if (language == null) {
             showToast(false, "Language can't be empty");
             return false
+        }  else if (national == null) {
+            showToast(false, "National can't be empty");
+            return false
         }
         return true;
     }
@@ -62,6 +67,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
                 trailer_url: trailerUrl,
                 language: language,
                 genre_ids: genreIds,
+                national_id: national,
             };
 
             const res = await axios.post(`${APIURL}/movies`, data, {
@@ -105,6 +111,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
 
         try {
             const res = await handleSubmitAddMovie();
+            console.log(res);
 
             if (res.code == 200) {
                 await handleUploadPoster(res.data.movie_id);
@@ -117,7 +124,8 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
         } catch (e) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            showToast(false,e.response.data.message);
+            console.log(e)
+            // showToast(false,e.response.data.message);
         }
     }
 
@@ -127,7 +135,17 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
             const opts = dataGenre.map((genre: { id: number, name: string, value: string }): OptionType => {
                 return {key: genre.id, label: genre.name, value: genre.name}
             })
-            setOptions(opts);
+            setOptionsGenre(opts);
+        });
+    };
+
+    const fetchDataNationals = async () => {
+        await axios.get(`${APIURL}/nationals`).then((res) => {
+            const dataNational = res.data.data;
+            const opts = dataNational.map((genre: { id: number, name: string, value: string }): OptionType => {
+                return {key: genre.id, label: genre.name, value: genre.name}
+            })
+            setOptionsNational(opts);
         });
     };
 
@@ -140,6 +158,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
 
     useEffect(() => {
         fetchDataGenres();
+        fetchDataNationals();
     }, []);
 
     const handleClose = ()=> {
@@ -151,6 +170,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
         setTrailerUrl(null);
         setLanguage(null);
         setGenreIds(null);
+        setNational(null);
         setPosterFileSelected(null);
     }
 
@@ -246,12 +266,27 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
                     variant="standard"
                     onChange={(e) => setLanguage(e.target.value)}
                 />
+
+                <Select
+                    name="national"
+                    options={optionsNational}
+                    className="basic-multi-select mt-5"
+                    classNamePrefix="select"
+                    placeholder="National"
+                    onChange={(select) => {
+                        if (select != null) {
+                            setNational(select.key);
+                        }
+                    }}
+                />
+
                 <Select
                     isMulti
-                    name="colors"
-                    options={options}
+                    name="genre"
+                    options={optionsGenre}
                     className="basic-multi-select mt-5 mb-52"
                     classNamePrefix="select"
+                    placeholder="Genre"
                     hideSelectedOptions={true}
                     onChange={(select) => {
                         setGenreIds(select.map((value) => value.key));

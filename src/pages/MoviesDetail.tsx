@@ -17,9 +17,10 @@ const MovieDetail = () => {
 
     const [openDialogTrailer, setOpenDialogTrailer] = useState<boolean>(false);
 
+    const APIURL = import.meta.env.VITE_URL_API;
+
     const getMovieByID = async () => {
         try {
-            const APIURL = import.meta.env.VITE_URL_API;
             const response = await axios.get(`${APIURL}/movies/${id}`)
             setMovie(response.data.data);
         } catch (e) {
@@ -29,7 +30,6 @@ const MovieDetail = () => {
 
     const getGenresMovie = async () => {
         try {
-            const APIURL = import.meta.env.VITE_URL_API;
             const response = await axios.get(`${APIURL}/movies/${id}/genres`)
             setGenres(response.data.data.genres);
         } catch (e) {
@@ -39,7 +39,6 @@ const MovieDetail = () => {
 
     const getDirectorsMovie = async () => {
         try {
-            const APIURL = import.meta.env.VITE_URL_API;
             const response = await axios.get(`${APIURL}/movies/${id}/directors`)
             setDirectors(response.data.data.directors);
         } catch (e) {
@@ -49,7 +48,6 @@ const MovieDetail = () => {
 
     const getActorsMovie = async () => {
         try {
-            const APIURL = import.meta.env.VITE_URL_API;
             const response = await axios.get(`${APIURL}/movies/${id}/actors`)
             setActors(response.data.data.actors);
         } catch (e) {
@@ -81,7 +79,7 @@ const MovieDetail = () => {
                     <img src={FIREBASE_PATH + movie?.poster_url + "?alt=media"} alt={movie?.title} className="h-80 w-52 rounded-md z-50"
                          draggable={false}/>
                     <div className="flex gap-1">
-                        {genres?.map(genre => <Link className="mt-2" to={`/genres/${genre.genre_id}`}>
+                        {genres?.map(genre => <Link key={genre.genre_id} className="mt-2" to={`/genres/${genre.genre_id}`}>
                             <div
                                 className="bg-primaryColor text-white rounded-2xl text-sm py-1 px-2">{genre.name}
                             </div>
