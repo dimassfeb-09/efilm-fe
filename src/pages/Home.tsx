@@ -12,6 +12,7 @@ export default function Home() {
 
     const [recommendation, setRecommendation] = useState<RecommendationMoviesType[] | null>(null);
     const [movies, setMovies] = useState<MoviesType[] | null>(null);
+    const [nationals, setNationals] = useState<National[] | null>(null);
 
     const APIURL = import.meta.env.VITE_URL_API;
 
@@ -33,9 +34,22 @@ export default function Home() {
         }
     }
 
+    const fetchDataNationals = async () => {
+        try {
+            const response = await axios.get(`${APIURL}/nationals`)
+            const data: National[] = response.data.data.map((national: National): National => {
+                return {id: national.id, name: national.name}
+            });
+            setNationals(data);
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     useEffect(() => {
         fetchDataMovies();
         fetchDataMoviesRecommendation();
+        fetchDataNationals();
     }, [])
 
     return <>
@@ -79,60 +93,33 @@ export default function Home() {
                         })}
                     </Swiper>
                 </div>
-                {movies?.filter((movie)=> movie.national_id == 1).length != 0 ? <div>
-                    <div className="p-5 text-xl font-bold">Drama Korea</div>
-                    <div
-                        className="flex">
-                        <div className="flex flex-nowrap px-5 overflow-x-scroll hidden-overflow w-full">
-                            {movies?.map(movie => {
-                                if (movie.national_id == 1) {
-                                    return <CardMovie
-                                        movie_id={movie.id}
-                                        title={movie.title}
-                                        release_date={movie.release_date}
-                                        poster_url={movie.poster_url}
-                                    />;
-                                }
-                            })}
+                {nationals?.map((national) => {
+                    const nationalMovies = movies?.filter((movie) => movie.national_id === national.id) ?? [];
+                    if (nationalMovies.length === 0) {
+                        return null;
+                    }
+                    return (
+                        <div key={national.id}>
+                            <div className="p-5 text-xl font-bold">{national.name}</div>
+                            <div className="flex">
+                                <div className="flex flex-nowrap px-5 overflow-x-scroll hidden-overflow w-full">
+                                    {movies?.map((movie) => {
+                                        if (movie.national_id === national.id) {
+                                            return <CardMovie
+                                                key={movie.id}
+                                                movie_id={movie.id}
+                                                title={movie.title}
+                                                release_date={movie.release_date}
+                                                poster_url={movie.poster_url}
+                                            />;
+                                        }
+                                        return null;
+                                    })}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div> : <></>}
-                {movies?.filter((movie)=> movie.national_id == 14).length != 0 ? <div>
-                    <div className="p-5 text-xl font-bold">Drama Thailand</div>
-                    <div
-                        className="flex">
-                        <div className="flex flex-nowrap px-5 overflow-x-scroll hidden-overflow w-full">
-                            {movies?.map(movie => {
-                                if (movie.national_id == 14) {
-                                    return <CardMovie
-                                        movie_id={movie.id}
-                                        title={movie.title}
-                                        release_date={movie.release_date}
-                                        poster_url={movie.poster_url}
-                                    />;
-                                }
-                            })}
-                        </div>
-                    </div>
-                </div> : <></>}
-                {movies?.filter((movie)=> movie.national_id == 2).length != 0 ? <div>
-                    <div className="p-5 text-xl font-bold">Drama & Film Indonesia</div>
-                    <div
-                        className="flex">
-                        <div className="flex flex-nowrap px-5 overflow-x-scroll hidden-overflow w-full">
-                            {movies?.map(movie => {
-                                if (movie.national_id == 2) {
-                                    return <CardMovie
-                                        movie_id={movie.id}
-                                        title={movie.title}
-                                        release_date={movie.release_date}
-                                        poster_url={movie.poster_url}
-                                    />;
-                                }
-                            })}
-                        </div>
-                    </div>
-                </div> : <></>}
+                    );
+                })}
 
             </div>
         </div>
