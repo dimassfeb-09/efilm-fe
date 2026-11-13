@@ -1,5 +1,6 @@
 // AuthContext.tsx
 import React, { createContext, useContext, ReactNode } from 'react';
+import {useCookies} from "react-cookie";
 import {VerifyJWT} from "../api/jwt.ts";
 
 // Define the shape of your authentication context
@@ -14,9 +15,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Create a provider component to wrap your application with
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [cookie] = useCookies(['access_token']);
     const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
     const login = async () => {
-        const isVerify = await VerifyJWT();
+        const isVerify = await VerifyJWT(cookie.access_token);
         if (isVerify) {
             setIsAuthenticated(true);
         }

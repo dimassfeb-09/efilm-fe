@@ -3,6 +3,7 @@ import {ChangeEvent, useEffect, useState} from "react";
 import axios from "axios";
 import {APIURL} from "../constant/constant.ts";
 import Select from "react-select";
+const SelectAny = Select as any;
 import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
 import {DatePicker} from "@mui/x-date-pickers";
@@ -107,8 +108,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
             return res.data;
 
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+            // @ts-expect-error
             showToast(false, String(e.response.data.message));
         }
     }
@@ -124,8 +124,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                 }
             });
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+            // @ts-expect-error
             showToast(false,e.response.data.message);
         }
     }
@@ -148,8 +147,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
             handleClose();
             setLoading(false);
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+            // @ts-expect-error
             showToast(false,e.response.data.message);
             handleClose();
             setLoading(false);
@@ -293,21 +291,21 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     variant="standard"
                     onChange={(e) => setLanguage(e.target.value)}
                 />
-                <Select
+                <SelectAny
                     name="national"
                     value={optionsNational.filter((v)=>v.key == national) ?? 0}
                     options={optionsNational}
                     className="basic-multi-select mt-5"
                     classNamePrefix="select"
                     placeholder="National"
-                    onChange={(select) => {
+                    onChange={(select: any) => {
                         if (select != null) {
                             setNational(select.key);
                         }
                     }}
                 />
 
-                <Select
+                <SelectAny
                     isMulti
                     name="colors"
                     value={selected}
@@ -315,7 +313,7 @@ const ShowDialogUpdateMovie = (props: propsShowDialog) => {
                     className="basic-multi-select mt-5 mb-52"
                     classNamePrefix="select"
                     hideSelectedOptions={true}
-                    onChange={(select) => setGenreIds(select.map(select=>select.key))}
+                    onChange={(select: any) => setGenreIds(select.map((s: any)=>s.key))}
                 />
             </DialogContent>
             <DialogActions>

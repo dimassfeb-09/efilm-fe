@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type MoviesType = {
     id: number;
     title: string;

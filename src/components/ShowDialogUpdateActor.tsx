@@ -5,6 +5,7 @@ import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
 import {formattedDate} from "../helpers/formattedDate.ts";
 import Select from "react-select";
+const SelectAny = Select as any;
 import {APIURL} from "../constant/constant.ts";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -48,8 +49,7 @@ const ShowDialogUpdateActor = (props: propsShowDialog) => {
                 showToast(true, "Success update actor.")
             }
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+            // @ts-expect-error
             showToast(false, String(e.response.data.message))
         }
     }
@@ -124,7 +124,7 @@ const ShowDialogUpdateActor = (props: propsShowDialog) => {
                 </div>
 
 
-                <Select
+                <SelectAny
                     name="national"
                     placeholder="National"
                     options={options}
@@ -132,7 +132,7 @@ const ShowDialogUpdateActor = (props: propsShowDialog) => {
                     classNamePrefix="select"
                     value={options.filter((opts)=> opts.key==nationalityID)}
                     isSearchable={true}
-                    onChange={(select) => {
+                    onChange={(select: any) => {
                         if (select != null) {
                             setNationalityID(select.key)
                         }

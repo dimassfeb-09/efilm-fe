@@ -5,6 +5,7 @@ import axios from "axios";
 import {useCookies} from "react-cookie";
 import {APIURL} from "../constant/constant.ts";
 import Select from "react-select";
+const SelectAny = Select as any;
 import showToast from "./toast.tsx";
 import {DatePicker} from "@mui/x-date-pickers";
 
@@ -78,8 +79,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
             )
             return res.data;
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+            // @ts-expect-error
             showToast(false,e.response.data.message);
         }
     }
@@ -96,8 +96,7 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
             })
             return res;
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+            // @ts-expect-error
             showToast(false,e.response.data.message);
         }
     }
@@ -122,8 +121,6 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
             showToast(true, "Success added new movie");
 
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             console.log(e)
             // showToast(false,e.response.data.message);
         }
@@ -267,20 +264,20 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
                     onChange={(e) => setLanguage(e.target.value)}
                 />
 
-                <Select
+                <SelectAny
                     name="national"
                     options={optionsNational}
                     className="basic-multi-select mt-5"
                     classNamePrefix="select"
                     placeholder="National"
-                    onChange={(select) => {
+                    onChange={(select: any) => {
                         if (select != null) {
                             setNational(select.key);
                         }
                     }}
                 />
 
-                <Select
+                <SelectAny
                     isMulti
                     name="genre"
                     options={optionsGenre}
@@ -288,8 +285,8 @@ const ShowDialogAddMovie = (props: propsShowDialog) => {
                     classNamePrefix="select"
                     placeholder="Genre"
                     hideSelectedOptions={true}
-                    onChange={(select) => {
-                        setGenreIds(select.map((value) => value.key));
+                    onChange={(select: any) => {
+                        setGenreIds(select.map((value: any) => value.key));
                     }}
                 />
             </DialogContent>

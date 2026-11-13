@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type RecommendationMoviesType = {
     movie_id: number,
     title:string;

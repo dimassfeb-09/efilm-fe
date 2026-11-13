@@ -1,6 +1,7 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import Select from "react-select";
+const SelectAny = Select as any;
 import axios from "axios";
 import showToast from "./toast.tsx";
 import {useCookies} from "react-cookie";
@@ -45,8 +46,7 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
                 props.handleUpdateData();
             }
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+            // @ts-expect-error
             showToast(false, String(e.response.data.message))
         }
     }
@@ -116,14 +116,14 @@ const ShowDialogAddActor = (props: propsShowDialog) => {
                     />
                 </div>
 
-                <Select
+                <SelectAny
                     name="national"
                     placeholder="National"
                     options={options}
                     className="basic-multi-select mt-5 mb-56"
                     classNamePrefix="select"
                     isSearchable={true}
-                    onChange={(select) => {
+                    onChange={(select: any) => {
                         if (select != null) {
                             setNationalityID(select.key)
                         }

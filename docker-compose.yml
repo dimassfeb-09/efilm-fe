@@ -1,0 +1,12 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        VITE_URL_API: ${VITE_URL_API:-https://efilm.140.245.120.205.sslip.io/api/}
+        VITE_FIREBASE_IMAGE_PATH: ${VITE_FIREBASE_IMAGE_PATH:-}
+    image: efilm-fe:latest
+    container_name: efilm-fe
+    ports:
+      - "${PORT:-8080}:80"
+    restart: unless-stopped

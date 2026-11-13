@@ -35,13 +35,11 @@ const ShowDialogDeleteGenre = (props: propsShowDialog) => {
                 props.handleUpdateData()
             }
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+            // @ts-expect-error
             if (String(e.response.data.message).includes("foreign key")) {
                 showToast(false, "Cannot delete data due to a foreign key constraint.");
             } else {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
+                // @ts-expect-error
                 showToast(false, String(e.response.data.message));
             }
             props.handleClose();

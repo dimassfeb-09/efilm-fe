@@ -1,14 +1,12 @@
 // api.js
 import axios from 'axios';
-import {useCookies} from "react-cookie";
 import {APIURL} from "../constant/constant.ts";
 
-export async function VerifyJWT() : Promise<boolean> {
-    const [cookie,] = useCookies(['access_token'])
+export async function VerifyJWT(token: string | undefined) : Promise<boolean> {
     try {
         const response = await axios.post(`${APIURL}/users/info`, null, {
             headers: {
-                'Authorization': `Bearer ${cookie.access_token}`,
+                'Authorization': `Bearer ${token}`,
             },
         });
 

@@ -4,6 +4,7 @@ import axios from "axios";
 import {PlayArrowOutlined} from "@mui/icons-material";
 import {Dialog, DialogContent, DialogTitle} from "@mui/material";
 import ReactPlayer from "react-player";
+const ReactPlayerAny = ReactPlayer as any;
 import {FIREBASE_PATH} from "../constant/constant.ts";
 
 const MovieDetail = () => {
@@ -101,7 +102,7 @@ const MovieDetail = () => {
                     >
                         <DialogTitle>{movie?.title} - Trailer</DialogTitle>
                         <DialogContent>
-                            <ReactPlayer
+                            <ReactPlayerAny
                                 url={movie?.trailer_url}
                                 width={500}
                                 playing={openDialogTrailer}

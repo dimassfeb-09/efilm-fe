@@ -1,6 +1,7 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import { useEffect, useState} from "react";
 import Select from "react-select";
+const SelectAny = Select as any;
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import showToast from "./toast.tsx";
@@ -72,8 +73,7 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
                 showToast(true, "Success added director to movie")
             }
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+            // @ts-expect-error
             showToast(false, String(e.response.data.message))
         }
     }
@@ -97,28 +97,28 @@ const ShowDialogAddDirectorToMovie = (props: propsShowDialog) => {
                     This form is used to add director data
                 </DialogContentText>
 
-                <Select
+                <SelectAny
                     name="director"
                     placeholder="Director"
                     options={options}
                     className="basic-multi-select mt-5"
                     classNamePrefix="select"
                     isSearchable={true}
-                    onChange={(select) => {
+                    onChange={(select: any) => {
                         if (select != null) {
                             setDirectorSelected(select.key)
                         }
                     }}
                 />
 
-                <Select
+                <SelectAny
                     name="movies"
                     placeholder="Movie"
                     options={optionsMovie}
                     className="basic-multi-select mt-5 mb-56"
                     classNamePrefix="select"
                     isSearchable={true}
-                    onChange={(select) => {
+                    onChange={(select: any) => {
                         if (select != null) {
                             setMovieSelected(select.key)
                         }
