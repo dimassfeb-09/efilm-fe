@@ -39,7 +39,7 @@ export default function NavBar() {
                         <li className="pt-5"><Link to={'/'}>Home</Link></li>
                         <li className="pt-5"><Link to={'/genres'}>Genres</Link></li>
                         <li className="mt-5 bg-secondaryColor px-2 rounded"><a
-                            href="https://efilm-restfulapi.dimasfebriyant1.repl.co/"
+                            href="https://efilm-api.dimassfeb.com/docs"
                             target="_blank">API Documentation</a></li>
                         {useAuths.isAuthenticated ?
                             <>
